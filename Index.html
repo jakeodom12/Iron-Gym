@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#09090b">
+    <title>The Iron Garage</title>
+    
+    <!-- Tech Stack: Tailwind CSS & Lucide Icons -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        zinc: {
+                            850: '#1f1f22',
+                            900: '#18181b',
+                            950: '#09090b',
+                        },
+                        iron: {
+                            red: '#dc2626', // Red-600
+                            dark: '#09090b',
+                            surface: '#27272a', // Zinc-800
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
+                    },
+                    spacing: {
+                        'safe-top': 'env(safe-area-inset-top)',
+                        'safe-bottom': 'env(safe-area-inset-bottom)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* iOS Optimization & Custom Scrollbars */
+        body {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            user-select: none;
+            background-color: #09090b; /* Zinc-950 */
+        }
+        
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Smooth tab transitions */
+        .tab-active {
+            border-bottom: 2px solid #dc2626;
+            color: #f4f4f5; /* Zinc-100 */
+        }
+        .tab-inactive {
+            border-bottom: 2px solid transparent;
+            color: #71717a; /* Zinc-500 */
+        }
+
+        /* Checkbox Animation */
+        .checkbox-wrapper input:checked + div {
+            background-color: #dc2626;
+            border-color: #dc2626;
+        }
+        .checkbox-wrapper input:checked + div svg {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-zinc-950 text-zinc-100 h-screen w-screen overflow-hidden flex flex-col font-sans">
+
+    <!-- App Content Wrapper -->
+    <div id="app" class="flex-1 flex flex-col h-full relative">
+        <!-- Rendered via JS -->
+    </div>
+
+    <!-- JavaScript Data & Logic -->
+    <script>
+        // --- 1. DATA ARCHITECTURE ---
+        
+        const INVENTORY = {
+            kbs: {
+                pairs: [20, 24, 32], // kg
+                singles: [28, 44]    // kg
+            },
+            barbell: true,
+            machines: ['Assault Runner', 'Reverse Hyper', 'Pull-up Bar']
+        };
+
+        const WORKOUTS = {
+            grind: [
+                {
+                    id: 'es-classic',
+                    title: 'Easy Strength Classic',
+                    desc: 'The fundamental 40-day protocol. Never miss a rep, never fail, leave fresh.',
+                    equipment: 'Barbell, Pull-up Bar',
+                    protocol: '2x5 per movement. Warm up, do the work, put weights away.',
+                    movements: [
+                        'Whole Body (Deadlift or Swing)',
+                        'Push (Press or Bench)',
+                        'Pull (Pull-up or Row)',
+                        'Hinge/Squat (Supple movement)',
+                        'Loaded Carry (Farmer Walk)'
+                    ],
+                    rounds: 1 // It's just one giant checklist
+                },
+                {
+                    id: 'breathing-squat',
+                    title: 'Breathing Squat Complex',
+                    desc: 'Old school systemic hypertrophy. Use moderate weight.',
+                    equipment: 'Barbell',
+                    protocol: '3 Rounds. Focus on deep breathing.',
+                    movements: [
+                        '15-20 Breathing Squats',
+                        '15-20 Pullovers',
+                        'Bench Press (interspersed)',
+                        'Curls (interspersed)'
+                    ],
+                    rounds: 3
+                },
+                {
+                    id: 'complex-a',
+                    title: 'Barbell Complex A',
+                    desc: '"Wrestler Strength" for collision athletes.',
+                    equipment: 'Barbell',
+                    protocol: '8 reps each movement. Do not put the bar down.',
+                    movements: [
+                        'Row',
+                        'Clean',
+                        'Front Squat',
+                        'Military Press',
+                        'Back Squat',
+                        'Good Mornings'
+                    ],
+                    rounds: 5
+                }
+            ],
+            ballistic: [
+                {
+                    id: 'humane-burpee',
+                    title: 'Humane Burpee',
+                    desc: 'Dan John classic. Volume descends, heart rate ascends.',
+                    equipment: 'Kettlebell (Single 24kg or 32kg)',
+                    protocol: '15 Swings, then Goblet Squats/Pushups ladder (5-4-3-2-1).',
+                    movements: [
+                        '15 Swings',
+                        'Goblet Squats (Descending 5->1)',
+                        'Pushups (Descending 5->1)'
+                    ],
+                    rounds: 5
+                },
+                {
+                    id: 'cardio-clean',
+                    title: 'Cardio Clean Complex',
+                    desc: 'A grip-intensive gasser.',
+                    equipment: 'Kettlebell (Single)',
+                    protocol: 'L/R Ladder: 8/3, 5/2, 3/1 (Cleans/Squats).',
+                    movements: [
+                        'Left: 8 Cleans, 3 Squats',
+                        'Right: 8 Cleans, 3 Squats',
+                        'Left: 5 Cleans, 2 Squats',
+                        'Right: 5 Cleans, 2 Squats',
+                        'Left: 3 Cleans, 1 Squat',
+                        'Right: 3 Cleans, 1 Squat'
+                    ],
+                    rounds: 1
+                },
+                {
+                    id: 'lift-n-sprint',
+                    title: 'Lift-n-Sprints',
+                    desc: 'Gear change drill. Hinge to explosive speed.',
+                    equipment: 'Barbell or KB, Assault Runner',
+                    protocol: '8-10 reps hinge/squat, immediately into sprint.',
+                    movements: [
+                        '10 Heavy Swings or Cleans',
+                        '100m Sprint (Assault Runner)'
+                    ],
+                    rounds: 5
+                }
+            ],
+            hybrid: [
+                {
+                    id: 'abc-double',
+                    title: 'Armor Building Complex',
+                    desc: 'The Gold Standard. Double KB work.',
+                    equipment: 'Double KBs (Rec: 2x24kg)',
+                    protocol: '2 Cleans, 1 Press, 3 Front Squats. EMOM or until failure.',
+                    movements: [
+                        '2 Double Cleans',
+                        '1 Double Press',
+                        '3 Front Squats'
+                    ],
+                    rounds: 20 // Default target for a session
+                },
+                {
+                    id: 'abc-single',
+                    title: 'Single KB ABC',
+                    desc: 'Asymmetry focus. 4-4-4 total count.',
+                    equipment: 'Single KB (32kg or 28kg)',
+                    protocol: '1 Clean & Press (L), 1 Clean & Press (R), 2 Squats.',
+                    movements: [
+                        'Left: 1 Clean & Press',
+                        'Right: 1 Clean & Press',
+                        '2 Goblet/Front Squats'
+                    ],
+                    rounds: 15
+                },
+                {
+                    id: 'running-back',
+                    title: 'Running Back Complex',
+                    desc: 'Descending ladder without putting bells down.',
+                    equipment: 'Double KBs',
+                    protocol: 'Ladder 5->1 reps of Cleans & Front Squats.',
+                    movements: [
+                        'Double Cleans (5,4,3,2,1)',
+                        'Front Squats (5,4,3,2,1)'
+                    ],
+                    rounds: 3
+                },
+                {
+                    id: 'the-perfect',
+                    title: 'The Perfect Workout',
+                    desc: 'Mobility, Grind, and Ballistics.',
+                    equipment: 'Pull-up Bar, KB',
+                    protocol: 'Round 1: Mobility/Press. Round 2: Squats/Swings/Carries.',
+                    movements: [
+                        'Part A: 1/2 Kneel Press & Hangs',
+                        'Part B: 5x15 Swings, Goblet Squats, Carries'
+                    ],
+                    rounds: 1
+                }
+            ]
+        };
+
+        // --- 2. STATE MANAGEMENT ---
+        
+        const STORAGE_KEY = 'iron-garage-v1';
+        
+        let state = {
+            currentTab: 'grind', // grind, ballistic, hybrid
+            activeWorkout: null, // object if a workout is active
+            checklist: {}, // { 0: true, 1: false } map of completed rounds
+            ...loadState()
+        };
+
+        function loadState() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            return stored ? JSON.parse(stored) : {};
+        }
+
+        function saveState() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                currentTab: state.currentTab,
+                activeWorkout: state.activeWorkout,
+                checklist: state.checklist
+            }));
+        }
+
+        // --- 3. UI RENDERING COMPONENTS ---
+
+        const Icons = {
+            Dumbbell: '<i data-lucide="dumbbell" class="w-5 h-5"></i>',
+            Zap: '<i data-lucide="zap" class="w-5 h-5"></i>',
+            Activity: '<i data-lucide="activity" class="w-5 h-5"></i>',
+            Shuffle: '<i data-lucide="shuffle" class="w-6 h-6"></i>',
+            ChevronLeft: '<i data-lucide="chevron-left" class="w-6 h-6"></i>',
+            Check: '<i data-lucide="check" class="w-4 h-4 text-white hidden"></i>',
+            Info: '<i data-lucide="info" class="w-5 h-5"></i>',
+            Settings: '<i data-lucide="settings-2" class="w-5 h-5"></i>'
+        };
+
+        function render() {
+            const app = document.getElementById('app');
+            let html = '';
+
+            // Safe Area Header
+            html += `
+                <div class="pt-safe-top bg-zinc-900 border-b border-zinc-800 sticky top-0 z-50">
+                    <div class="h-14 flex items-center justify-between px-4">
+                        ${state.activeWorkout 
+                            ? `<button onclick="exitWorkout()" class="p-2 -ml-2 text-zinc-400 hover:text-white">${Icons.ChevronLeft}</button>`
+                            : `<div class="w-8"></div>` // Spacer
+                        }
+                        <h1 class="text-lg font-bold tracking-tight text-white uppercase italic">The Iron Garage</h1>
+                        <button onclick="showInventory()" class="p-2 -mr-2 text-zinc-400 hover:text-white">${Icons.Info}</button>
+                    </div>
+                </div>
+            `;
+
+            // Content Area
+            html += `<div class="flex-1 overflow-y-auto overflow-x-hidden hide-scrollbar pb-safe-bottom bg-zinc-950 relative">`;
+
+            if (state.activeWorkout) {
+                html += renderActiveWorkout();
+            } else {
+                html += renderDashboard();
+            }
+
+            html += `</div>`; // End Content
+
+            app.innerHTML = html;
+            lucide.createIcons();
+        }
+
+        function renderDashboard() {
+            return `
+                <!-- Tabs -->
+                <div class="flex border-b border-zinc-800 bg-zinc-900 sticky top-0 z-40">
+                    <button onclick="switchTab('grind')" class="flex-1 py-4 text-sm font-medium uppercase tracking-wider text-center ${state.currentTab === 'grind' ? 'tab-active' : 'tab-inactive'}">Grind</button>
+                    <button onclick="switchTab('ballistic')" class="flex-1 py-4 text-sm font-medium uppercase tracking-wider text-center ${state.currentTab === 'ballistic' ? 'tab-active' : 'tab-inactive'}">Ballistic</button>
+                    <button onclick="switchTab('hybrid')" class="flex-1 py-4 text-sm font-medium uppercase tracking-wider text-center ${state.currentTab === 'hybrid' ? 'tab-active' : 'tab-inactive'}">Hybrid</button>
+                </div>
+
+                <!-- Randomizer FAB -->
+                <div class="px-4 pt-6 pb-2">
+                    <button onclick="randomizeWorkout()" class="w-full bg-gradient-to-r from-red-600 to-red-700 active:from-red-700 active:to-red-800 text-white rounded-xl py-4 shadow-lg shadow-red-900/20 flex items-center justify-center gap-2 transition-transform active:scale-[0.98]">
+                        ${Icons.Shuffle}
+                        <span class="font-bold uppercase tracking-wide">Roll the Dice: ${state.currentTab}</span>
+                    </button>
+                </div>
+
+                <!-- Workout List -->
+                <div class="p-4 space-y-3">
+                    <div class="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Available Protocols</div>
+                    ${WORKOUTS[state.currentTab].map(w => `
+                        <div onclick="selectWorkout('${w.id}')" class="bg-zinc-900 border border-zinc-800 rounded-xl p-4 active:bg-zinc-800 transition-colors cursor-pointer">
+                            <div class="flex justify-between items-start mb-1">
+                                <h3 class="text-white font-bold text-lg">${w.title}</h3>
+                                <span class="text-xs bg-zinc-800 text-zinc-400 px-2 py-1 rounded border border-zinc-700">${w.rounds > 1 ? w.rounds + ' Rnds' : 'Checklist'}</span>
+                            </div>
+                            <p class="text-zinc-400 text-sm leading-snug mb-3">${w.desc}</p>
+                            <div class="flex items-center gap-2 text-xs text-zinc-500">
+                                ${Icons.Dumbbell}
+                                <span>${w.equipment}</span>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function renderActiveWorkout() {
+            const w = state.activeWorkout;
+            const progress = calculateProgress();
+            
+            return `
+                <div class="min-h-full pb-20">
+                    <!-- Hero -->
+                    <div class="px-6 pt-8 pb-6 bg-zinc-900 border-b border-zinc-800">
+                        <div class="inline-block px-2 py-1 rounded bg-red-900/30 text-red-500 text-xs font-bold uppercase tracking-wider mb-3 border border-red-900/50">
+                            ${state.currentTab} Protocol
+                        </div>
+                        <h2 class="text-3xl font-black text-white mb-2 leading-none">${w.title}</h2>
+                        <p class="text-zinc-400 text-sm">${w.desc}</p>
+                    </div>
+
+                    <!-- Details -->
+                    <div class="p-6 space-y-6">
+                        
+                        <!-- Equipment -->
+                        <div class="bg-zinc-900/50 rounded-lg p-4 border border-zinc-800">
+                            <h4 class="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2">Gear Required</h4>
+                            <p class="text-zinc-300 text-sm font-medium">${w.equipment}</p>
+                        </div>
+
+                        <!-- Protocol Info -->
+                         <div class="bg-zinc-900/50 rounded-lg p-4 border border-zinc-800">
+                            <h4 class="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2">The Work</h4>
+                            <p class="text-zinc-300 text-sm mb-3 italic">"${w.protocol}"</p>
+                            <ul class="space-y-2">
+                                ${w.movements.map(m => `<li class="flex items-center gap-2 text-zinc-300 text-sm"><span class="w-1.5 h-1.5 rounded-full bg-red-600"></span>${m}</li>`).join('')}
+                            </ul>
+                        </div>
+
+                        <!-- Tracker -->
+                        <div>
+                             <div class="flex justify-between items-end mb-4">
+                                <h4 class="text-sm font-bold text-white uppercase tracking-wider">Round Tracker</h4>
+                                <span class="text-xs text-zinc-500 font-mono">${progress}% Complete</span>
+                            </div>
+                            
+                            <div class="grid grid-cols-5 gap-2">
+                                ${Array.from({length: w.rounds}).map((_, i) => `
+                                    <label class="checkbox-wrapper cursor-pointer relative">
+                                        <input type="checkbox" class="opacity-0 absolute w-full h-full z-10" 
+                                            ${state.checklist[i] ? 'checked' : ''} 
+                                            onchange="toggleRound(${i})">
+                                        <div class="h-12 rounded bg-zinc-800 border-2 border-zinc-700 flex items-center justify-center transition-all duration-200">
+                                            <span class="text-sm font-bold text-zinc-500 ${state.checklist[i] ? 'hidden' : 'block'}">${i + 1}</span>
+                                            ${Icons.Check}
+                                        </div>
+                                    </label>
+                                `).join('')}
+                                
+                                <!-- Add Round Button -->
+                                <button onclick="addRound()" class="h-12 rounded bg-zinc-900 border border-dashed border-zinc-700 flex items-center justify-center text-zinc-500 hover:text-white hover:border-zinc-500 active:scale-95 transition-all">
+                                    <span class="text-xl font-bold">+</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="pt-8">
+                             <button onclick="completeWorkout()" class="w-full py-4 bg-zinc-100 text-zinc-950 font-bold uppercase rounded-xl active:scale-[0.98] transition-transform">
+                                Finish Session
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- 4. LOGIC & ACTIONS ---
+
+        function switchTab(tab) {
+            state.currentTab = tab;
+            saveState();
+            render();
+        }
+
+        function selectWorkout(id) {
+            const workout = WORKOUTS[state.currentTab].find(w => w.id === id);
+            if (workout) {
+                state.activeWorkout = workout;
+                state.checklist = {}; // Reset rounds on new start
+                saveState();
+                render();
+            }
+        }
+
+        function randomizeWorkout() {
+            const list = WORKOUTS[state.currentTab];
+            const random = list[Math.floor(Math.random() * list.length)];
+            selectWorkout(random.id);
+        }
+
+        function toggleRound(index) {
+            state.checklist[index] = !state.checklist[index];
+            saveState();
+            render();
+        }
+        
+        function addRound() {
+            if(state.activeWorkout) {
+                state.activeWorkout.rounds += 1;
+                saveState();
+                render();
+            }
+        }
+
+        function calculateProgress() {
+            const total = state.activeWorkout.rounds;
+            const completed = Object.values(state.checklist).filter(Boolean).length;
+            return Math.round((completed / total) * 100);
+        }
+
+        function completeWorkout() {
+            if (confirm('Finish workout? This will clear current progress.')) {
+                exitWorkout();
+            }
+        }
+
+        function exitWorkout() {
+            state.activeWorkout = null;
+            state.checklist = {};
+            saveState();
+            render();
+        }
+        
+        function showInventory() {
+            const invText = `
+INVENTORY:
+• KBs (Pairs): ${INVENTORY.kbs.pairs.join('kg, ')}kg
+• KBs (Singles): ${INVENTORY.kbs.singles.join('kg, ')}kg
+• Barbell
+• ${INVENTORY.machines.join('\n• ')}
+            `.trim();
+            alert(invText);
+        }
+
+        // Initialize
+        render();
+
+    </script>
+</body>
+</html>
