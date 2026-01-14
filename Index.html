@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="robots" content="noindex, nofollow">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#09090b">
@@ -29,6 +30,7 @@
                             dark: '#09090b',
                             surface: '#27272a', // Zinc-800
                             emerald: '#10b981',
+                            blue: '#3b82f6',
                         }
                     },
                     fontFamily: {
@@ -69,6 +71,10 @@
             border-bottom: 2px solid #10b981; /* Emerald-500 */
             color: #f4f4f5;
         }
+        .tab-active-tonic {
+            border-bottom: 2px solid #3b82f6; /* Blue-500 */
+            color: #f4f4f5;
+        }
         .tab-inactive {
             border-bottom: 2px solid transparent;
             color: #71717a; /* Zinc-500 */
@@ -91,6 +97,15 @@
         .checkbox-wrapper-rebuild input:checked + div svg {
             display: block;
         }
+
+         /* Tonic specific checkbox */
+         .checkbox-wrapper-tonic input:checked + div {
+            background-color: #3b82f6;
+            border-color: #3b82f6;
+        }
+        .checkbox-wrapper-tonic input:checked + div svg {
+            display: block;
+        }
     </style>
 </head>
 <body class="bg-zinc-950 text-zinc-100 h-screen w-screen overflow-hidden flex flex-col font-sans">
@@ -104,6 +119,8 @@
     <script>
         // --- 1. DATA ARCHITECTURE ---
         
+        const APP_BUILD_DATE = "Jan 13, 2026 - 6:35 PM MST";
+
         const INVENTORY = {
             kbs: {
                 pairs: [20, 24, 32], // kg
@@ -114,11 +131,11 @@
         };
 
         const WARMUP_ROUTINE = [
-            { title: "1. Meditation", desc: "1-Minute One-Moment Meditation. Count breaths." },
-            { title: "2. Mobility", desc: "30s Bar Hang + 30s Goblet Squat Hold." },
-            { title: "3. Review", desc: "Check Journal & Compass." },
-            { title: "4. Compass Points", desc: "Check: Work, Rest, Play, Pray." },
-            { title: "5. Warm-up Sets", desc: "1 Set each: OH Press, Row, Hinge, OH Squat, Carry." }
+            { title: "1. Meditation", desc: "1-Minute One-Moment Meditation. Sit quietly, close eyes, and count your breaths." },
+            { title: "2. Mobility", desc: "Hang from a bar for 30 seconds (decompress spine) + Sit in the bottom of a Goblet Squat for 30 seconds (open hips)." },
+            { title: "3. Review", desc: "Check your training journal and review your 'Compass' (Work, Rest, Play, Pray balance)." },
+            { title: "4. Compass Points", desc: "Ensure you are not neglecting Work, Rest, Play, or Pray/Spiritual health." },
+            { title: "5. Warm-up Sets", desc: "Perform 1 light set of each: Overhead Press, Row, Hinge (Swing/Deadlift), Overhead Squat, and a Carry." }
         ];
 
         // Standard Workouts (Randomizable)
@@ -127,91 +144,140 @@
                 {
                     id: 'es-classic',
                     title: 'Easy Strength Classic',
-                    desc: 'The fundamental 40-day protocol. Never miss a rep, never fail, leave fresh.',
+                    desc: 'The fundamental 40-day protocol. Ideally performed 5 days a week. Never miss a rep, never fail, leave fresh.',
                     equipment: 'Barbell, Pull-up Bar',
                     difficulty: 'beginner',
-                    protocol: '2x5 per movement. Warm up, do the work, put weights away.',
-                    movements: ['Whole Body (DL/Swing)', 'Push (Press/Bench)', 'Pull (Pull-up/Row)', 'Hinge/Squat', 'Loaded Carry'],
+                    protocol: 'Perform 2 sets of 5 reps for each movement. Warm up, do the work, put weights away. Do not seek fatigue.',
+                    movements: [
+                        'Whole Body: Deadlift OR Kettlebell Swing (2x5)',
+                        'Push: Overhead Press OR Bench Press (2x5)',
+                        'Pull: Pull-up OR Barbell Row (2x5)',
+                        'Hinge/Squat: Front Squat OR Goblet Squat (2x5)',
+                        'Loaded Carry: Farmer Walk (Distance varies)'
+                    ],
                     rounds: 1
                 },
                 {
                     id: 'reg-park-5x5',
                     title: 'Reg Park 5x5',
-                    desc: 'The grandfather of all strength programs.',
+                    desc: 'The grandfather of all strength programs. Simple, effective, and brutal if rushed.',
                     equipment: 'Barbell',
                     difficulty: 'beginner',
-                    protocol: '2 warm-up sets, 3 working sets of 5 reps.',
-                    movements: ['Squat 5x5', 'Chin-ups 5x5', 'Dip or Press 5x5', 'Deadlift 5x5', 'Barbell Curl 3x10'],
+                    protocol: 'Perform 2 warm-up sets, then 3 "working" sets of 5 reps. Rest 3-5 minutes between working sets.',
+                    movements: [
+                        'Back Squat: 5 sets of 5 reps',
+                        'Chin-ups: 5 sets of 5 reps',
+                        'Dip OR Bench Press: 5 sets of 5 reps',
+                        'Deadlift: 5 sets of 5 reps',
+                        'Barbell Curl: 3 sets of 10 reps'
+                    ],
                     rounds: 1
                 },
                 {
                     id: 'abf-press-day',
                     title: 'ABF: Press Day',
-                    desc: 'The Yin to the ABC Yang. Heavy volume pressing.',
+                    desc: 'The Yin to the ABC Yang. Heavy volume pressing day from the Armor Building Formula.',
                     equipment: 'Double KBs or Barbell',
                     difficulty: 'intermediate',
-                    protocol: 'Focus on Military Press. Varies by week.',
-                    movements: ['Double Mil Press (Ladders 2-3-5)', 'Pull-ups (match sets)', 'Goblet Squats (light)'],
+                    protocol: 'Focus on Military Press volume. Ladders mean you do 2 reps, rest, 3 reps, rest, 5 reps. That is one ladder.',
+                    movements: [
+                        'Double Military Press: Ladders of 2-3-5',
+                        'Pull-ups: Match the sets/reps of the Press',
+                        'Goblet Squats: Light sets to stay loose'
+                    ],
                     rounds: 5
                 },
                  {
                     id: 'abf-break-in',
                     title: 'ABF: Hypertrophy Break-In',
-                    desc: 'Barbell mass building phase.',
+                    desc: 'A Barbell mass building phase for those new to Armor Building.',
                     equipment: 'Barbell',
                     difficulty: 'beginner',
-                    protocol: 'Classic sets and reps. Focus on technique and squeeze.',
-                    movements: ['Clean & Press 5x8', 'Barbell Curl 3-5x8', 'Squat 3x10'],
+                    protocol: 'Classic bodybuilding sets and reps. Focus on technique and the "squeeze".',
+                    movements: [
+                        'Clean & Press: 5 sets of 8 reps',
+                        'Barbell Curl: 3-5 sets of 8 reps',
+                        'Squat: 3 sets of 10 reps (optional)'
+                    ],
                     rounds: 1
                 },
                 {
                     id: 'southwood',
                     title: 'Southwood Program',
-                    desc: 'Classic 4 days/week strength builder.',
+                    desc: 'Classic 4 days/week strength builder. Great for off-season athletes.',
                     equipment: 'Barbell',
                     difficulty: 'intermediate',
-                    protocol: '8-6-4 Reps on all lifts. Add weight when all reps completed.',
-                    movements: ['Power Clean (8-6-4)', 'Mil Press (8-6-4)', 'Front Squat (8-6-4)', 'Bench Press (8-6-4)'],
+                    protocol: 'Perform 8 reps, add weight, 6 reps, add weight, 4 reps. Do this for all lifts. When you complete all reps with good form, add weight next time.',
+                    movements: [
+                        'Power Clean: 8-6-4 reps',
+                        'Military Press: 8-6-4 reps',
+                        'Front Squat: 8-6-4 reps',
+                        'Bench Press: 8-6-4 reps'
+                    ],
                     rounds: 1
                 },
                 {
                     id: 'rop-heavy',
                     title: 'Rite of Passage (Heavy)',
-                    desc: 'The classic ladder press program.',
+                    desc: 'The classic Pavel Tsatsouline ladder press program.',
                     equipment: 'Single KB',
                     difficulty: 'advanced',
-                    protocol: 'Clean & Press Ladders (1-2-3-4-5). Finish with Swings.',
-                    movements: ['C&P Ladders (Heavy)', 'Weighted Pull-ups', 'Finisher: Dice Roll Swings/Snatch'],
+                    protocol: 'Clean & Press Ladders (1-2-3-4-5). Rest as needed. Finish with high volume swings.',
+                    movements: [
+                        'C&P Ladders: 1, 2, 3, 4, 5 reps per side',
+                        'Weighted Pull-ups: 1, 2, 3, 4, 5 reps',
+                        'Finisher: Roll dice for minutes of Snatches/Swings'
+                    ],
                     rounds: 5
                 },
                 {
                     id: 'paschall-classic',
                     title: 'The Paschall One-Set',
-                    desc: 'Old school bodybuilding. One heavy set of 16-20.',
+                    desc: 'Old school bodybuilding. One heavy set of 16-20 reps. Brutal but short.',
                     equipment: 'Barbell',
                     difficulty: 'intermediate',
-                    protocol: '1 Set x 16-20 Reps per movement.',
-                    movements: ['OH Squat', 'Curl', 'DL + Shrug', 'Incline Press', 'Triceps', 'Back Squat', 'Upright Row'],
+                    protocol: 'Perform exactly 1 set of 16-20 reps for each movement. Go close to failure.',
+                    movements: [
+                        'Overhead Squat',
+                        'Barbell Curl',
+                        'Deadlift + Shrug (at top)',
+                        'Incline Bench Press',
+                        'Triceps Extension',
+                        'Back Squat',
+                        'Upright Row'
+                    ],
                     rounds: 1
                 },
                 {
                     id: 'breathing-squat',
                     title: 'Breathing Squat Complex',
-                    desc: 'Systemic hypertrophy. Moderate weight.',
+                    desc: 'Systemic hypertrophy. Uses deep breathing to expand the rib cage.',
                     equipment: 'Barbell',
                     difficulty: 'intermediate',
-                    protocol: '3 Sets. Squats supersetted with Pullovers.',
-                    movements: ['15-20 Breathing Squats', '15-20 Pullovers', 'Bench Press (interspersed)', 'Curls (interspersed)'],
+                    protocol: '3 Sets. Squats are immediately followed by light Pullovers to stretch the rib cage.',
+                    movements: [
+                        'Breathing Squats: 15-20 reps (3 deep breaths between reps)',
+                        'Straight Arm Pullovers: 15-20 reps (light weight)',
+                        'Bench Press (interspersed)',
+                        'Curls (interspersed)'
+                    ],
                     rounds: 3
                 },
                 {
                     id: 'complex-a',
                     title: 'Barbell Complex A',
-                    desc: '"Wrestler Strength". High capacity.',
+                    desc: '"Wrestler Strength". High capacity work for collision athletes.',
                     equipment: 'Barbell',
                     difficulty: 'advanced',
-                    protocol: '8 reps each movement. Bar does not touch ground.',
-                    movements: ['Row', 'Clean', 'Front Squat', 'Mil Press', 'Back Squat', 'Good Mornings'],
+                    protocol: '8 reps each movement. The bar does NOT touch the ground until the entire round is over.',
+                    movements: [
+                        'Bent Over Row: 8 reps',
+                        'Power Clean: 8 reps',
+                        'Front Squat: 8 reps',
+                        'Military Press: 8 reps',
+                        'Back Squat: 8 reps',
+                        'Good Mornings: 8 reps'
+                    ],
                     rounds: 5
                 }
             ],
@@ -219,21 +285,30 @@
                 {
                     id: 'humane-burpee',
                     title: 'Humane Burpee',
-                    desc: 'Volume descends, heart rate ascends.',
+                    desc: 'Volume descends, heart rate ascends. A Dan John classic.',
                     equipment: 'Kettlebell',
                     difficulty: 'intermediate',
-                    protocol: '15 Swings, then Goblet Squats/Pushups ladder (5->1).',
-                    movements: ['15 Swings', 'Goblet Squats (5->1)', 'Pushups (5->1)'],
+                    protocol: '15 Swings, then a ladder of Goblet Squats and Pushups (5 reps, then 4, 3, 2, 1).',
+                    movements: [
+                        '15 KB Swings',
+                        'Goblet Squats (5, 4, 3, 2, 1)',
+                        'Pushups (5, 4, 3, 2, 1)',
+                        'Repeat pattern: 15 Swings between every ladder rung.'
+                    ],
                     rounds: 5
                 },
                 {
                     id: 'eagle',
                     title: 'The Eagle',
-                    desc: 'A Dan John classic. "So simple, so hard."',
+                    desc: 'A Dan John signature challenge. "So simple, so hard."',
                     equipment: 'Double KBs',
                     difficulty: 'advanced',
-                    protocol: '8 Double Front Squats, 20m Farmer Carry. 8 Rounds.',
-                    movements: ['8 Double Front Squats', '20m Farmer Carry', 'Do NOT put bells down.'],
+                    protocol: '8 Double Front Squats, then immediately walk 20m in Rack Walk. That is one round. Do not put bells down.',
+                    movements: [
+                        '8 Double Front Squats',
+                        '20m Farmer/Rack Carry',
+                        'Do NOT put bells down between rounds.'
+                    ],
                     rounds: 8
                 },
                 {
@@ -242,48 +317,72 @@
                     desc: 'Metabolic density. Choose your poison.',
                     equipment: 'Kettlebell',
                     difficulty: 'intermediate',
-                    protocol: '15 Swings, Goblet Squat Ladder (5->1).',
-                    movements: ['15 Swings', 'Goblet Squats (5->1)', 'Var: 10 Mtn Climbers OR Bear Crawl'],
+                    protocol: 'Like Humane Burpee, but replace Pushups with Mtn Climbers or Bear Crawl.',
+                    movements: [
+                        '15 KB Swings',
+                        'Goblet Squats (5, 4, 3, 2, 1)',
+                        'Var: 10 Mtn Climbers OR Bear Crawl (Distance)'
+                    ],
                     rounds: 5
                 },
                 {
                     id: 'snatch-test',
                     title: 'The Snatch Test',
-                    desc: 'The standard. 100 Reps in 5 mins.',
-                    equipment: '24kg KB',
+                    desc: 'The gold standard of KB conditioning. 100 Reps in 5 mins.',
+                    equipment: '24kg KB (Men) / 16kg (Women)',
                     difficulty: 'advanced',
-                    protocol: 'Goal: < 5 Minutes. Manage your fatigue.',
-                    movements: ['20L / 20R', '15L / 15R', '10L / 10R', '5L / 5R'],
+                    protocol: 'Goal: Complete 100 reps in < 5 Minutes. You may switch hands and set the bell down.',
+                    movements: [
+                        '20 Left / 20 Right',
+                        '15 Left / 15 Right',
+                        '10 Left / 10 Right',
+                        '5 Left / 5 Right'
+                    ],
                     rounds: 1
                 },
                 {
                     id: 'ssst',
                     title: 'Secret Service Snatch Test',
-                    desc: 'Elite work capacity test.',
+                    desc: 'Elite work capacity test for tactical athletes.',
                     equipment: '24kg KB',
                     difficulty: 'advanced',
-                    protocol: '10 Minutes MAX Reps. Switch hands as needed.',
-                    movements: ['Max Snatch Reps in 10:00', 'Std: >200 (Excellent)', 'Elite: >250'],
+                    protocol: '10 Minutes MAX Reps. Switch hands as needed. Pacing is key.',
+                    movements: [
+                        'Max Snatch Reps in 10:00',
+                        'Standard: >200 reps (Excellent)',
+                        'Elite: >250 reps'
+                    ],
                     rounds: 1
                 },
                 {
                     id: 'cardio-clean',
                     title: 'Cardio Clean Complex',
-                    desc: 'Grip-intensive gasser.',
+                    desc: 'Grip-intensive gasser. Active rest for the grip.',
                     equipment: 'Single KB',
                     difficulty: 'intermediate',
-                    protocol: 'L/R Ladder: 8/3, 5/2, 3/1 (Cleans/Squats).',
-                    movements: ['L: 8 Clean/3 Squat', 'R: 8 Clean/3 Squat', 'L: 5 Clean/2 Squat', 'R: 5 Clean/2 Squat', 'L: 3 Clean/1 Squat', 'R: 3 Clean/1 Squat'],
+                    protocol: 'Perform ladder on Left, then Right. 8 Cleans/3 Squats, then 5/2, then 3/1.',
+                    movements: [
+                        'L: 8 Cleans / 3 Squats',
+                        'R: 8 Cleans / 3 Squats',
+                        'L: 5 Cleans / 2 Squats',
+                        'R: 5 Cleans / 2 Squats',
+                        'L: 3 Cleans / 1 Squat',
+                        'R: 3 Cleans / 1 Squat'
+                    ],
                     rounds: 1
                 },
                  {
                     id: 'lift-n-sprint',
                     title: 'Lift-n-Sprints',
-                    desc: 'Gear change drill. Hinge to explosive speed.',
+                    desc: 'Gear change drill. Teaches body to switch from heavy grind to explosive speed.',
                     equipment: 'Barbell or KB, Runner',
                     difficulty: 'intermediate',
-                    protocol: '8-10 reps hinge/squat, immediately into sprint.',
-                    movements: ['10 Heavy Swings or Cleans', '100m Sprint (Assault Runner)'],
+                    protocol: 'Perform 8-10 reps of a hinge/squat, then IMMEDIATELY sprint.',
+                    movements: [
+                        '10 Heavy Swings or Cleans',
+                        '100m Sprint (Assault Runner)',
+                        'Rest 2-3 minutes'
+                    ],
                     rounds: 5
                 }
             ],
@@ -291,31 +390,47 @@
                 {
                     id: 'abc-double',
                     title: 'Armor Building Complex',
-                    desc: 'The Gold Standard. Double KB work.',
+                    desc: 'The Gold Standard. Double KB work for armor.',
                     equipment: 'Double KBs',
                     difficulty: 'intermediate',
-                    protocol: '2 Cleans, 1 Press, 3 Front Squats. Goal: 30 Rnds in 30min.',
-                    movements: ['2 Double Cleans', '1 Double Press', '3 Front Squats'],
+                    protocol: '2 Cleans, 1 Press, 3 Front Squats. Advanced Goal: 30 Rounds in 30min.',
+                    movements: [
+                        '2 Double Cleans',
+                        '1 Double Press',
+                        '3 Double Front Squats'
+                    ],
                     rounds: 30
                 },
                 {
                     id: 'abc-barbell',
                     title: 'Barbell Armor Building',
-                    desc: 'The barbell adaptation.',
+                    desc: 'The barbell adaptation of the ABC.',
                     equipment: 'Barbell',
                     difficulty: 'intermediate',
-                    protocol: '2 Cleans, 1 Press, 3 Front Squats. Do not put bar down.',
-                    movements: ['2 Power Cleans', '1 Overhead Press', '3 Front Squats', 'Rest 1-2 min'],
+                    protocol: '2 Cleans, 1 Press, 3 Front Squats. Do not put bar down during the complex.',
+                    movements: [
+                        '2 Power Cleans',
+                        '1 Overhead Press',
+                        '3 Front Squats',
+                        'Rest 1-2 min'
+                    ],
                     rounds: 5
                 },
                  {
                     id: 'complex-c',
                     title: 'Barbell Complex C',
-                    desc: 'Explosive pulling and stability.',
+                    desc: 'Explosive pulling and lower body stability.',
                     equipment: 'Barbell',
                     difficulty: 'advanced',
-                    protocol: '5-8 Reps per movement. Continuous.',
-                    movements: ['Hang Snatch', 'Overhead Squat', 'Back Squat', 'Good Morning', 'Row', 'Deadlift'],
+                    protocol: '5-8 Reps per movement. Continuous bar handling.',
+                    movements: [
+                        'Hang Snatch',
+                        'Overhead Squat',
+                        'Back Squat',
+                        'Good Morning',
+                        'Bent Over Row',
+                        'Deadlift'
+                    ],
                     rounds: 3
                 },
                 {
@@ -324,8 +439,16 @@
                     desc: 'Asymmetry focus. Corrects imbalances.',
                     equipment: 'Single KB',
                     difficulty: 'beginner',
-                    protocol: 'One "Round" is the full L+R sequence below.',
-                    movements: ['(L) 1 Clean & Press', '(R) 1 Clean & Press', '2 Goblet Squats', '-- Park Bell --', '(R) 1 Clean & Press', '(L) 1 Clean & Press', '2 Goblet Squats'],
+                    protocol: 'One "Round" is the full sequence: Left Side -> Right Side -> Squats.',
+                    movements: [
+                        '(Left) 1 Clean & Press',
+                        '(Right) 1 Clean & Press',
+                        '2 Goblet Squats',
+                        '-- Park Bell / Shake Out --',
+                        '(Right) 1 Clean & Press',
+                        '(Left) 1 Clean & Press',
+                        '2 Goblet Squats'
+                    ],
                     rounds: 10
                 },
                 {
@@ -334,38 +457,54 @@
                     desc: 'Descending ladder, bells never touch ground.',
                     equipment: 'Double KBs',
                     difficulty: 'advanced',
-                    protocol: 'Ladder 5->1 reps of Cleans & Front Squats.',
-                    movements: ['Double Cleans (5,4,3,2,1)', 'Front Squats (5,4,3,2,1)'],
+                    protocol: 'Ladder 5 reps down to 1 rep of Cleans & Front Squats.',
+                    movements: [
+                        'Double Cleans (5, 4, 3, 2, 1)',
+                        'Front Squats (5, 4, 3, 2, 1)',
+                        'Try not to set bells down.'
+                    ],
                     rounds: 5
                 },
                 {
                     id: 'sparhawk',
                     title: 'The Sparhawk',
-                    desc: 'Goblet Squat ladder with carries.',
+                    desc: 'Goblet Squat ladder with carries. Density training.',
                     equipment: 'Single KB (32kg)',
                     difficulty: 'intermediate',
-                    protocol: 'Squat 8->1. Suitcase carry between every set.',
-                    movements: ['Goblet Squats (8..1)', 'Suitcase Carry L (20m)', 'Suitcase Carry R (20m)'],
+                    protocol: 'Squat ladder 8 down to 1. Perform Suitcase carry L/R between every set of squats.',
+                    movements: [
+                        'Goblet Squats (8, 7, 6...1)',
+                        'Suitcase Carry Left (20m)',
+                        'Suitcase Carry Right (20m)'
+                    ],
                     rounds: 8
                 },
                 {
                     id: 'cook-drill',
                     title: 'The Cook Drill',
-                    desc: 'Integrity under load.',
+                    desc: 'Integrity under load. Created by Gray Cook.',
                     equipment: 'Single KB',
                     difficulty: 'beginner',
-                    protocol: 'Walk until form breaks, then switch positions.',
-                    movements: ['Waiter Walk', 'Rack Walk', 'Suitcase Walk', 'Var: "CookED" add 10 swings between'],
+                    protocol: 'Walk until form breaks, then switch positions immediately.',
+                    movements: [
+                        'Waiter Walk (Overhead)',
+                        'Rack Walk (At chest)',
+                        'Suitcase Walk (At side)',
+                        'Var: "CookED" add 10 swings between walks'
+                    ],
                     rounds: 3
                 },
                 {
                     id: 'bear-bear',
                     title: 'Bear / Bear',
-                    desc: 'Simple, brutal conditioning.',
+                    desc: 'Simple, brutal conditioning for collision sports.',
                     equipment: 'Heavy Bag or Partner',
                     difficulty: 'intermediate',
-                    protocol: 'Crawl for distance, Carry for distance.',
-                    movements: ['Bear Crawl (20-40m)', 'Bear Hug Carry (40-60m)'],
+                    protocol: 'Crawl for distance, Carry for distance. Repeat.',
+                    movements: [
+                        'Bear Crawl (20-40m)',
+                        'Bear Hug Carry (40-60m)'
+                    ],
                     rounds: 5
                 },
                 {
@@ -374,40 +513,263 @@
                     desc: 'The festival of carries.',
                     equipment: 'Sled, KBs, Pack',
                     difficulty: 'advanced',
-                    protocol: 'Progressive loading carriage.',
-                    movements: ['Suitcase', 'Farmer', 'Suitcase + Pack', 'Farmer + Pack', 'Sled Drag', 'Sled + Bearhug', 'Sled + Pack + Farmer'],
+                    protocol: 'Progressive loading carriage. Do one set of each.',
+                    movements: [
+                        'Suitcase Carry',
+                        'Farmer Carry',
+                        'Suitcase + Backpack',
+                        'Farmer + Backpack',
+                        'Sled Drag',
+                        'Sled + Bearhug Carry',
+                        'Sled + Backpack + Farmer'
+                    ],
                     rounds: 1
+                }
+            ],
+            tonic: [
+                {
+                    id: 'tonic-ruck',
+                    title: 'The "Tonic" Ruck',
+                    desc: 'Restorative loaded walking. Corrects posture, burns calories, spares knees. Do not run.',
+                    equipment: 'Backpack + Weight',
+                    difficulty: 'beginner',
+                    protocol: 'Choose a Level (1-5) below. GOLDEN RULE: If you dread it, the load is too heavy. Keep HR in Zone 2 (130-140 BPM).',
+                    movements: [
+                        'Check Posture: Head Up, Ribs Down',
+                        'Lv 1: Unloaded / 2.5km / 18-20min/mi pace',
+                        'Lv 2: 10kg / 3.2km / 17-19min/mi pace',
+                        'Lv 3: 15kg / 4.8km / 15-16.5min/mi pace (Sweet Spot)',
+                        'Lv 4: 20kg / 5.0km / 15-16min/mi pace (Push)',
+                        'Lv 5: 24kg / 6.5km / <15min/mi pace (Challenge)'
+                    ],
+                    rounds: 1
+                },
+                {
+                    id: 'plenty-of-nothing',
+                    title: 'I Got Plenty of Nothing!',
+                    desc: 'Foundational bodyweight work. Keeps the body knitted together when you have no gear.',
+                    equipment: 'Floor',
+                    difficulty: 'beginner',
+                    protocol: 'Complete 1-3 rounds. Focus on movement quality, not speed.',
+                    movements: [
+                        'Push-ups or Planks: 10-20 reps',
+                        'Supermans (Posterior Chain): 10 reps',
+                        'Hip Thrusts / Glute Bridges: 10-20 reps',
+                        'Bodyweight Squats: 10-20 reps',
+                        'Ab Roll-ups: 10 slow reps',
+                        'Finish: Brisk Walk (15-30 min)'
+                    ],
+                    rounds: 3
+                },
+                {
+                    id: 'life-model',
+                    title: 'The Life Model Template',
+                    desc: 'Based on human development: crawling to rising.',
+                    equipment: 'Floor',
+                    difficulty: 'beginner',
+                    protocol: 'Restorative session. Do not rush. Focus on smooth transitions.',
+                    movements: [
+                        'Naked Turkish Get-ups (5-10 min)',
+                        'Half-Kneeling "Press" (Unloaded)',
+                        'Bird Dogs (6-point stance)',
+                        'OS: Rocks, Nods, & Rolls',
+                        'Finish: More Naked TGUs'
+                    ],
+                    rounds: 1
+                },
+                {
+                    id: 'humane-burpee-bw',
+                    title: 'Humane Burpee (BW)',
+                    desc: 'Metabolic density without external load.',
+                    equipment: 'Floor',
+                    difficulty: 'intermediate',
+                    protocol: '15 Hinge movements, then a Squat/Push-up ladder from 10 down to 1.',
+                    movements: [
+                        '15 Hinge Mvmts (Get-back-ups)',
+                        'Squats (10, 9, 8...1)',
+                        'Push-ups (10, 9, 8...1)'
+                    ],
+                    rounds: 10
+                },
+                 {
+                    id: 'os-reset',
+                    title: 'OS Reset Complex',
+                    desc: 'Original Strength system to reset the nervous system.',
+                    equipment: 'Floor',
+                    difficulty: 'beginner',
+                    protocol: '20 Minutes continuous flow or as needed for recovery.',
+                    movements: [
+                        'Prone Neck Nods',
+                        'Looking for Shoes (Head rotation)',
+                        '6-Point Rocking (Tall Sternum)',
+                        'Grizzly Bear Crawl',
+                        'Egg Rolls (Aim for 50 reps total)'
+                    ],
+                    rounds: 1
+                },
+                {
+                    id: 'floor-workout',
+                    title: 'The Floor Workout',
+                    desc: 'The "Greatest Secret". Getting up and down is a master skill.',
+                    equipment: 'Floor',
+                    difficulty: 'intermediate',
+                    protocol: 'Get down, get up. Repeat. Mix in mobility work while on the floor.',
+                    movements: [
+                        'Get Down (Any style)',
+                        'Floor Mobility (Rock/Roll/Stretch)',
+                        'Get Up (Any style)',
+                        'Repeat for time or reps'
+                    ],
+                    rounds: 20
                 }
             ]
         };
 
         // Rebuild Pathway: 12-Week Protocol
         const REBUILD_PATHWAY = {
-            overview: "A 12-week graduated return-to-play protocol. Starts with nervous system regulation and ends with full conditioning. Do not skip steps.",
+            overview: "A 12-week graduated return-to-play protocol. Starts with nervous system regulation and ends with full conditioning. Do not skip steps. If you finish a workout feeling 'trashed', you did too much.",
             weeks: [
                 // PHASE 1: THE RESET
-                { week: 1, title: 'Week 1: The Breath', context: 'Goal: Regulate the nervous system. No heavy loading.', movements: ['1-Min Meditation', 'OS: Neck Nods (1 min)', 'OS: Rocking (1 min)', 'Walk: 15 min Brisk Amble'] },
-                { week: 2, title: 'Week 2: Awakening', context: 'Goal: Reintroduce range of motion.', movements: ['1-Min Meditation', 'OS: Rocking + Nods', 'Hang: 30 sec (supported if needed)', 'Squat Hold: 30 sec (bottom pos)', 'Walk: 20 min'] },
-                { week: 3, title: 'Week 3: Patterning', context: 'Goal: Light load to test patterns.', movements: ['Daily Mobility Two (Hang/Squat)', 'Goblet Squat: 1 set of 5 (Light)', 'Suitcase Carry: 20m Left, 20m Right', 'Walk: 20 min'] },
-                { week: 4, title: 'Week 4: The Checkpoint', context: 'Goal: Integrity. If this feels easy, move to Phase 2.', movements: ['Daily Mobility Two', 'Goblet Squat: 2 sets of 5', 'Suitcase Carry: 40m per hand', 'OS: Egg Rolls', 'Walk: 30 min'] },
+                { 
+                    week: 1, 
+                    title: 'Week 1: The Breath', 
+                    context: 'Goal: Regulate the nervous system. No heavy loading.', 
+                    movements: [
+                        '1-Min Meditation: Count breaths', 
+                        'OS: Neck Nods (1 min)', 
+                        'OS: Rocking (1 min)', 
+                        'Walk: 15 min Brisk Amble'
+                    ] 
+                },
+                { 
+                    week: 2, 
+                    title: 'Week 2: Awakening', 
+                    context: 'Goal: Reintroduce range of motion.', 
+                    movements: [
+                        '1-Min Meditation', 
+                        'OS: Rocking + Nods', 
+                        'Hang: 30 sec (supported if needed)', 
+                        'Squat Hold: 30 sec (bottom pos)', 
+                        'Walk: 20 min'
+                    ] 
+                },
+                { 
+                    week: 3, 
+                    title: 'Week 3: Patterning', 
+                    context: 'Goal: Light load to test patterns.', 
+                    movements: [
+                        'Daily Mobility Two (Hang/Squat)', 
+                        'Goblet Squat: 1 set of 5 (Light weight)', 
+                        'Suitcase Carry: 20m Left, 20m Right', 
+                        'Walk: 20 min'
+                    ] 
+                },
+                { 
+                    week: 4, 
+                    title: 'Week 4: The Checkpoint', 
+                    context: 'Goal: Integrity. If this feels easy, move to Phase 2.', 
+                    movements: [
+                        'Daily Mobility Two', 
+                        'Goblet Squat: 2 sets of 5', 
+                        'Suitcase Carry: 40m per hand', 
+                        'OS: Egg Rolls (20 reps)', 
+                        'Walk: 30 min'
+                    ] 
+                },
                 
                 // PHASE 2: BUILDING BACK (Rule of 10)
-                { week: 5, title: 'Week 5: Tension', context: 'Goal: Rebuild structure. 3x3 rule.', movements: ['Half-Kneeling Press: 3 sets of 3', 'Assisted Pull-up/Hang: 3 sets of 3', 'Hip Thrust: 3 sets of 10', 'Suitcase Carry: Heavy'] },
-                { week: 6, title: 'Week 6: Stability', context: 'Goal: Maintain tension under fatigue.', movements: ['Half-Kneeling Press: 3 sets of 3', 'Assisted Pull-up: 3 sets of 3', 'KB Swing: 3 sets of 10', 'Suitcase Carry: Heavy'] },
-                { week: 7, title: 'Week 7: Volume', context: 'Goal: Shift to 2x5. More time under tension.', movements: ['Half-Kneeling Press: 2 sets of 5', 'Pull-up/Row: 2 sets of 5', 'KB Swing: 2 sets of 15', 'Farmer Carry (Two Hands)'] },
-                { week: 8, title: 'Week 8: Capacity', context: 'Goal: Test strength. Feel "Strong", not "Tired".', movements: ['HK Press: 2 sets of 5 (Add load)', 'Pull-up/Row: 2 sets of 5', 'Goblet Squat: 2 sets of 10', 'Farmer Carry: Distance'] },
+                { 
+                    week: 5, 
+                    title: 'Week 5: Tension', 
+                    context: 'Goal: Rebuild structure. 3x3 rule for tension.', 
+                    movements: [
+                        'Half-Kneeling Press: 3 sets of 3', 
+                        'Assisted Pull-up/Hang: 3 sets of 3', 
+                        'Hip Thrust: 3 sets of 10', 
+                        'Suitcase Carry: Heavy (20m)'
+                    ] 
+                },
+                { 
+                    week: 6, 
+                    title: 'Week 6: Stability', 
+                    context: 'Goal: Maintain tension under fatigue.', 
+                    movements: [
+                        'Half-Kneeling Press: 3 sets of 3', 
+                        'Assisted Pull-up: 3 sets of 3', 
+                        'KB Swing: 3 sets of 10', 
+                        'Suitcase Carry: Heavy (30m)'
+                    ] 
+                },
+                { 
+                    week: 7, 
+                    title: 'Week 7: Volume', 
+                    context: 'Goal: Shift to 2x5. More time under tension.', 
+                    movements: [
+                        'Half-Kneeling Press: 2 sets of 5', 
+                        'Pull-up/Row: 2 sets of 5', 
+                        'KB Swing: 2 sets of 15', 
+                        'Farmer Carry (Two Hands)'
+                    ] 
+                },
+                { 
+                    week: 8, 
+                    title: 'Week 8: Capacity', 
+                    context: 'Goal: Test strength. Feel "Strong", not "Tired".', 
+                    movements: [
+                        'HK Press: 2 sets of 5 (Add load)', 
+                        'Pull-up/Row: 2 sets of 5', 
+                        'Goblet Squat: 2 sets of 10', 
+                        'Farmer Carry: Distance'
+                    ] 
+                },
 
                 // PHASE 3: THE RETURN
-                { week: 9, title: 'Week 9: Integration', context: 'Goal: The "Perfect Workout" structure.', movements: ['[A] 3 Rnds: Press (8) + Hang (30s)', '[B] 1 Rnd: Goblet Sq (8) + Swing (15) + Carry', 'Finish: Walk'] },
-                { week: 10, title: 'Week 10: Density', context: 'Goal: Minimize rest in Part A.', movements: ['[A] 3 Rnds: Press (8) + Hang (30s)', '[B] 1 Rnd: Goblet Sq (10) + Swing (20) + Carry', 'Finish: Walk'] },
-                { week: 11, title: 'Week 11: Load', context: 'Goal: Heavier bell for swings/squats.', movements: ['[A] 3 Rnds: Press (5 Heavy) + Hang', '[B] 1 Rnd: Goblet Sq (10) + Swing (25) + Carry', 'Finish: Walk'] },
-                { week: 12, title: 'Week 12: Graduation', context: 'Goal: Ready for "Easy Strength".', movements: ['[A] 3 Rnds: Press (5) + Pull (5)', '[B] 2 Rnds: Goblet Sq (10) + Swing (25)', 'Congratulations. You are back.'] }
+                { 
+                    week: 9, 
+                    title: 'Week 9: Integration', 
+                    context: 'Goal: The "Perfect Workout" structure.', 
+                    movements: [
+                        '[A] 3 Rnds: Press (8) + Hang (30s)', 
+                        '[B] 1 Rnd: Goblet Sq (8) + Swing (15) + Carry', 
+                        'Finish: Walk'
+                    ] 
+                },
+                { 
+                    week: 10, 
+                    title: 'Week 10: Density', 
+                    context: 'Goal: Minimize rest in Part A.', 
+                    movements: [
+                        '[A] 3 Rnds: Press (8) + Hang (30s)', 
+                        '[B] 1 Rnd: Goblet Sq (10) + Swing (20) + Carry', 
+                        'Finish: Walk'
+                    ] 
+                },
+                { 
+                    week: 11, 
+                    title: 'Week 11: Load', 
+                    context: 'Goal: Heavier bell for swings/squats.', 
+                    movements: [
+                        '[A] 3 Rnds: Press (5 Heavy) + Hang', 
+                        '[B] 1 Rnd: Goblet Sq (10) + Swing (25) + Carry', 
+                        'Finish: Walk'
+                    ] 
+                },
+                { 
+                    week: 12, 
+                    title: 'Week 12: Graduation', 
+                    context: 'Goal: Ready for "Easy Strength".', 
+                    movements: [
+                        '[A] 3 Rnds: Press (5) + Pull (5)', 
+                        '[B] 2 Rnds: Goblet Sq (10) + Swing (25)', 
+                        'Congratulations. You are back.'
+                    ] 
+                }
             ]
         };
 
         // --- 2. STATE MANAGEMENT ---
         
-        const STORAGE_KEY = 'iron-garage-v8'; // Bumped version
+        const STORAGE_KEY = 'iron-garage-v13'; // Bumped version
         
         let state = {
             currentTab: 'home', 
@@ -450,7 +812,9 @@
             Calendar: '<i data-lucide="calendar" class="w-5 h-5"></i>',
             DiffEasy: '<span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>',
             DiffMed: '<span class="inline-block w-2 h-2 rounded-full bg-yellow-500"></span>',
-            DiffHard: '<span class="inline-block w-2 h-2 rounded-full bg-red-600"></span>'
+            DiffHard: '<span class="inline-block w-2 h-2 rounded-full bg-red-600"></span>',
+            Tonic: '<i data-lucide="activity" class="w-5 h-5"></i>',
+            Footprints: '<i data-lucide="footprints" class="w-4 h-4"></i>'
         };
 
         function render() {
@@ -515,6 +879,7 @@
                     <button onclick="switchTab('grind')" class="flex-1 min-w-[80px] py-4 text-xs font-bold uppercase tracking-wider text-center ${state.currentTab === 'grind' ? 'tab-active' : 'tab-inactive'}">Grind</button>
                     <button onclick="switchTab('ballistic')" class="flex-1 min-w-[80px] py-4 text-xs font-bold uppercase tracking-wider text-center ${state.currentTab === 'ballistic' ? 'tab-active' : 'tab-inactive'}">Ballistic</button>
                     <button onclick="switchTab('hybrid')" class="flex-1 min-w-[80px] py-4 text-xs font-bold uppercase tracking-wider text-center ${state.currentTab === 'hybrid' ? 'tab-active' : 'tab-inactive'}">Hybrid</button>
+                    <button onclick="switchTab('tonic')" class="flex-1 min-w-[80px] py-4 text-xs font-bold uppercase tracking-wider text-center ${state.currentTab === 'tonic' ? 'tab-active-tonic' : 'tab-inactive'}">Tonic</button>
                     <button onclick="switchTab('rebuild')" class="flex-1 min-w-[80px] py-4 text-xs font-bold uppercase tracking-wider text-center ${state.currentTab === 'rebuild' ? 'tab-active-rebuild' : 'tab-inactive'}">Rebuild</button>
                 </div>
             `;
@@ -523,12 +888,17 @@
             if (state.currentTab === 'rebuild') return navHtml + renderRebuildHub();
 
             let listHtml = `
+                <!-- Randomizer FAB (Excluded from Tonic/Rebuild) -->
+                ${state.currentTab !== 'tonic' ? `
                 <div class="px-4 pt-6 pb-2">
                     <button onclick="randomizeInTab('${state.currentTab}')" class="w-full bg-gradient-to-r from-red-600 to-red-700 active:from-red-700 active:to-red-800 text-white rounded-xl py-4 shadow-lg shadow-red-900/20 flex items-center justify-center gap-2 transition-transform active:scale-[0.98]">
                         ${Icons.Shuffle}
                         <span class="font-bold uppercase tracking-wide">Roll the Dice: ${state.currentTab}</span>
                     </button>
                 </div>
+                ` : `<div class="px-4 pt-6"><div class="bg-blue-900/20 border border-blue-900/50 p-3 rounded-lg text-blue-400 text-xs text-center">Tonic sessions are restorative. Choose deliberately.</div></div>`}
+
+                <!-- Workout List -->
                 <div class="p-4 space-y-3">
                     <div class="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Available Protocols</div>
                     ${WORKOUTS[state.currentTab].map(w => `
@@ -555,11 +925,8 @@
         }
 
         function renderRebuildHub() {
-            // View 2: Specific Week Selected
             if (state.activeRebuildWeek !== null) {
-                // Find the week object
                 const weekData = REBUILD_PATHWAY.weeks.find(w => w.week === state.activeRebuildWeek);
-                
                 return `
                     <div class="p-6">
                          <button onclick="clearRebuildWeek()" class="flex items-center text-emerald-500 text-sm font-bold mb-4">
@@ -602,7 +969,6 @@
                 `;
             }
 
-            // View 1: Roadmap Overview (12 Weeks)
             return `
                 <div class="p-6 space-y-6">
                     <div class="bg-zinc-900 p-5 rounded-2xl border border-zinc-800">
@@ -671,6 +1037,7 @@
                         <button onclick="randomizeGlobal()" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-4 rounded-xl uppercase tracking-wider transition-all active:scale-[0.98] shadow-lg shadow-red-900/40 text-sm flex items-center justify-center gap-2">
                             ${Icons.Shuffle} Randomize All
                         </button>
+                        <div class="text-[10px] text-zinc-600 font-mono mt-4">Build: ${APP_BUILD_DATE}</div>
                     </div>
                     
                     <div class="space-y-3 mt-2">
@@ -691,12 +1058,20 @@
                                 <span class="font-bold text-zinc-200 block text-sm uppercase">Hybrid</span>
                                 <span class="text-xs text-zinc-600">The Mix</span>
                             </button>
-                            <button onclick="switchTab('rebuild')" class="bg-zinc-900 p-4 rounded-xl border border-zinc-800 text-left hover:border-emerald-700 hover:bg-zinc-800 transition-all group">
-                                <span class="block text-zinc-500 mb-2 group-hover:text-emerald-500 transition-colors">${Icons.Leaf}</span>
-                                <span class="font-bold text-zinc-200 block text-sm uppercase">Rebuild</span>
-                                <span class="text-xs text-zinc-600">Reset & Recovery</span>
+                            <button onclick="switchTab('tonic')" class="bg-zinc-900 p-4 rounded-xl border border-zinc-800 text-left hover:border-blue-700 hover:bg-zinc-800 transition-all group">
+                                <span class="block text-zinc-500 mb-2 group-hover:text-blue-500 transition-colors">${Icons.Tonic}</span>
+                                <span class="font-bold text-zinc-200 block text-sm uppercase">Tonic</span>
+                                <span class="text-xs text-zinc-600">Bodyweight/Reset</span>
                             </button>
                         </div>
+                         <!-- Rebuild separate row -->
+                        <button onclick="switchTab('rebuild')" class="w-full bg-zinc-900 p-4 rounded-xl border border-zinc-800 text-left hover:border-emerald-700 hover:bg-zinc-800 transition-all group flex items-center justify-between">
+                            <div>
+                                <span class="font-bold text-zinc-200 block text-sm uppercase">Rebuild Program</span>
+                                <span class="text-xs text-zinc-600">12-Week Return Protocol</span>
+                            </div>
+                            <span class="text-zinc-500 group-hover:text-emerald-500 transition-colors">${Icons.Leaf}</span>
+                        </button>
                     </div>
                 </div>
             `;
@@ -705,7 +1080,7 @@
         function renderActiveWorkout() {
             const w = state.activeWorkout;
             const progress = calculateProgress();
-            // Determine category style
+            
             let category = getWorkoutCategory(w.id);
             let themeColor = 'bg-red-900/30 text-red-500 border-red-900/50';
             let checkColor = 'checkbox-wrapper';
@@ -713,6 +1088,9 @@
             if (category === 'Rebuild') {
                  themeColor = 'bg-emerald-900/30 text-emerald-500 border-emerald-900/50';
                  checkColor = 'checkbox-wrapper-rebuild';
+            } else if (category === 'Tonic') {
+                 themeColor = 'bg-blue-900/30 text-blue-500 border-blue-900/50';
+                 checkColor = 'checkbox-wrapper-tonic';
             }
             
             return `
@@ -744,7 +1122,7 @@
                             <ul class="space-y-2">
                                 ${w.movements.map(m => `
                                     <li class="flex items-start gap-3 text-zinc-300 text-sm">
-                                        <span class="w-1.5 h-1.5 rounded-full ${category === 'Rebuild' ? 'bg-emerald-500' : 'bg-red-600'} mt-2 shrink-0"></span>
+                                        <span class="w-1.5 h-1.5 rounded-full ${category === 'Rebuild' ? 'bg-emerald-500' : (category === 'Tonic' ? 'bg-blue-500' : 'bg-red-600')} mt-2 shrink-0"></span>
                                         <span class="leading-relaxed">${m}</span>
                                     </li>
                                 `).join('')}
@@ -802,6 +1180,7 @@
             if (tab === 'ballistic') return Icons.Zap;
             if (tab === 'hybrid') return Icons.Activity;
             if (tab === 'rebuild') return Icons.Leaf;
+            if (tab === 'tonic') return Icons.Tonic;
             return Icons.Dumbbell;
         }
 
@@ -828,7 +1207,6 @@
         function startRebuildSession(weekNum) {
             const weekData = REBUILD_PATHWAY.weeks.find(w => w.week === weekNum);
             
-            // Construct a temporary workout object for the runner
             const tempWorkout = {
                 id: `rebuild-week-${weekNum}`,
                 title: weekData.title,
@@ -869,7 +1247,8 @@
 
         function randomizeGlobal() {
             // Flatten ONLY the standard workouts, explicitly excluding Rebuild
-            const allWorkouts = Object.values(WORKOUTS).flat();
+            const allowedLists = [WORKOUTS.grind, WORKOUTS.ballistic, WORKOUTS.hybrid];
+            const allWorkouts = allowedLists.flat();
             const random = allWorkouts[Math.floor(Math.random() * allWorkouts.length)];
             selectWorkout(random.id);
         }
@@ -895,3 +1274,5 @@
     </script>
 </body>
 </html>
+
+
