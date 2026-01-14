@@ -4,110 +4,69 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
-    <!-- SECURITY PROTOCOLS -->
-    <!-- Deny all external connections except approved CDNs (Tailwind/Lucide) -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://unpkg.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'none';">
-    <!-- Do not send referrer data to links -->
+    <!-- SECURITY & PRIVACY -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://unpkg.com https://generativelanguage.googleapis.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self' https://generativelanguage.googleapis.com;">
     <meta name="referrer" content="no-referrer">
-    <!-- Disable browser features that compromise privacy -->
-    <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=(), interest-cohort=()">
-    <!-- Prevent MIME sniffing -->
-    <meta http-equiv="X-Content-Type-Options" content="nosniff">
-    
     <meta name="robots" content="noindex, nofollow, noarchive">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#09090b">
     <title>The Iron Garage</title>
     
-    <!-- Tech Stack: Tailwind CSS & Lucide Icons -->
+    <!-- Tech Stack -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     
-    <!-- Tailwind Configuration -->
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
-                        zinc: {
-                            850: '#1f1f22',
-                            900: '#18181b',
-                            950: '#09090b',
-                        },
-                        iron: {
-                            red: '#dc2626', // Red-600
-                            dark: '#09090b',
-                            surface: '#27272a', // Zinc-800
-                            emerald: '#10b981',
-                            blue: '#3b82f6',
-                            amber: '#f59e0b',
-                        }
+                        zinc: { 850: '#1f1f22', 900: '#18181b', 950: '#09090b' },
+                        iron: { red: '#dc2626', emerald: '#10b981', blue: '#3b82f6', amber: '#f59e0b', purple: '#8b5cf6' }
                     },
-                    fontFamily: {
-                        sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
-                    },
-                    spacing: {
-                        'safe-top': 'env(safe-area-inset-top)',
-                        'safe-bottom': 'env(safe-area-inset-bottom)',
-                    }
+                    fontFamily: { sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'] },
+                    spacing: { 'safe-top': 'env(safe-area-inset-top)', 'safe-bottom': 'env(safe-area-inset-bottom)' }
                 }
             }
         }
     </script>
-
     <style>
-        /* iOS Optimization & Custom Scrollbars */
-        body {
-            -webkit-tap-highlight-color: transparent;
-            -webkit-touch-callout: none;
-            user-select: none;
-            background-color: #09090b; /* Zinc-950 */
-        }
-        
-        .hide-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .hide-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-
-        /* Smooth tab transitions */
+        body { -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; user-select: none; background-color: #09090b; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         .tab-active { border-bottom: 2px solid #dc2626; color: #f4f4f5; }
         .tab-active-rebuild { border-bottom: 2px solid #10b981; color: #f4f4f5; }
         .tab-active-tonic { border-bottom: 2px solid #3b82f6; color: #f4f4f5; }
         .tab-active-ruck { border-bottom: 2px solid #f59e0b; color: #f4f4f5; }
+        .tab-active-history { border-bottom: 2px solid #8b5cf6; color: #f4f4f5; }
         .tab-inactive { border-bottom: 2px solid transparent; color: #71717a; }
-
-        /* Checkbox Animation */
         .checkbox-wrapper input:checked + div { background-color: #dc2626; border-color: #dc2626; }
         .checkbox-wrapper input:checked + div svg { display: block; }
-        
+        /* Variations */
         .checkbox-wrapper-rebuild input:checked + div { background-color: #10b981; border-color: #10b981; }
         .checkbox-wrapper-rebuild input:checked + div svg { display: block; }
-
         .checkbox-wrapper-tonic input:checked + div { background-color: #3b82f6; border-color: #3b82f6; }
         .checkbox-wrapper-tonic input:checked + div svg { display: block; }
-        
         .checkbox-wrapper-ruck input:checked + div { background-color: #f59e0b; border-color: #f59e0b; }
         .checkbox-wrapper-ruck input:checked + div svg { display: block; }
+        /* Floating Timer */
+        .floating-timer { position: fixed; bottom: calc(env(safe-area-inset-bottom) + 80px); right: 20px; z-index: 50; }
+        /* Chat UI */
+        .chat-bubble { max-width: 85%; padding: 12px; border-radius: 12px; margin-bottom: 8px; font-size: 0.9rem; line-height: 1.4; }
+        .chat-user { background-color: #27272a; color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+        .chat-ai { background-color: #dc2626; color: white; align-self: flex-start; border-bottom-left-radius: 2px; }
     </style>
 </head>
 <body class="bg-zinc-950 text-zinc-100 h-screen w-screen overflow-hidden flex flex-col font-sans">
-
-    <!-- App Content Wrapper -->
     <div id="app" class="flex-1 flex flex-col h-full relative"></div>
 
-    <!-- JavaScript Data & Logic -->
     <script>
-    (function() { // IIFE for Security/Scope Isolation
-
-        // --- 1. DATA ARCHITECTURE ---
-        
-        const APP_BUILD_DATE = "Jan 14, 2026 - Security Patch 1.0";
-        const STORAGE_KEY = 'iron-garage-secure-v15'; 
+    (function() {
+        const APP_BUILD_DATE = "Jan 14, 2026 - v17.0 (AI Trainer)";
+        const STORAGE_KEY = 'iron-garage-v17'; 
+        const apiKey = ""; // System will inject key at runtime
 
         const INVENTORY = {
             kbs: { pairs: [20, 24, 32], singles: [28, 44] },
@@ -118,522 +77,311 @@
         const WARMUP_ROUTINE = [
             { title: "1. Meditation", desc: "1-Min: Sit quietly, close eyes, count breaths." },
             { title: "2. Mobility", desc: "30s Bar Hang + 30s Goblet Squat Hold." },
-            { title: "3. Review", desc: "Check Journal & Compass (Work, Rest, Play, Pray)." },
-            { title: "4. Compass", desc: "Audit your balance." },
-            { title: "5. Warm-up Sets", desc: "1 set each: OH Press, Row, Hinge, OH Squat, Carry." }
+            { title: "3. Review", desc: "Check Journal & Compass." },
+            { title: "4. Compass", desc: "Work, Rest, Play, Pray." },
+            { title: "5. Warm-up Sets", desc: "1 set each: Press, Row, Hinge, Squat, Carry." }
         ];
 
-        // Standard Workouts
         const WORKOUTS = {
             grind: [
-                { id: 'es-classic', title: 'Easy Strength Classic', desc: 'The 40-day protocol. Never miss a rep, leave fresh.', equipment: 'Barbell, Pull-up Bar', difficulty: 'beginner', protocol: '2x5 per movement. Warm up, do the work, put weights away.', movements: ['Whole Body: DL or Swing (2x5)', 'Push: Press or Bench (2x5)', 'Pull: Pull-up or Row (2x5)', 'Hinge/Squat: Front/Goblet Sq (2x5)', 'Loaded Carry: Farmer Walk'], rounds: 1 },
-                { id: 'reg-park-5x5', title: 'Reg Park 5x5', desc: 'The grandfather of strength programs.', equipment: 'Barbell', difficulty: 'beginner', protocol: '2 warm-ups, 3 working sets of 5.', movements: ['Back Squat: 5x5', 'Chin-ups: 5x5', 'Dip/Bench: 5x5', 'Deadlift: 5x5', 'Barbell Curl: 3x10'], rounds: 1 },
-                { id: 'abf-press-day', title: 'ABF: Press Day', desc: 'Heavy volume pressing day.', equipment: 'Double KBs/Barbell', difficulty: 'intermediate', protocol: 'Focus on Military Press volume.', movements: ['Dbl Mil Press: Ladders 2-3-5', 'Pull-ups: Match sets', 'Goblet Squats: Light'], rounds: 5 },
-                { id: 'abf-break-in', title: 'ABF: Hypertrophy Break-In', desc: 'Mass building phase.', equipment: 'Barbell', difficulty: 'beginner', protocol: 'Classic sets. Focus on squeeze.', movements: ['Clean & Press: 5x8', 'Barbell Curl: 3-5x8', 'Squat: 3x10 (opt)'], rounds: 1 },
-                { id: 'southwood', title: 'Southwood Program', desc: '4 days/week strength builder.', equipment: 'Barbell', difficulty: 'intermediate', protocol: '8-6-4 Reps. Add weight when completed.', movements: ['Power Clean: 8-6-4', 'Mil Press: 8-6-4', 'Front Squat: 8-6-4', 'Bench Press: 8-6-4'], rounds: 1 },
-                { id: 'rop-heavy', title: 'Rite of Passage (Heavy)', desc: 'Classic ladder press program.', equipment: 'Single KB', difficulty: 'advanced', protocol: 'Ladders 1-5. Finish w/ Swings.', movements: ['C&P Ladders: 1-2-3-4-5', 'Weighted Pull-ups: 1-2-3-4-5', 'Finisher: Dice Roll Swings'], rounds: 5 },
-                { id: 'paschall-classic', title: 'The Paschall One-Set', desc: 'Old school bodybuilding.', equipment: 'Barbell', difficulty: 'intermediate', protocol: '1 set of 16-20 reps. To failure.', movements: ['OH Squat', 'Curl', 'DL+Shrug', 'Incline Press', 'Triceps Ext', 'Back Squat', 'Upright Row'], rounds: 1 },
-                { id: 'breathing-squat', title: 'Breathing Squat Complex', desc: 'Systemic hypertrophy.', equipment: 'Barbell', difficulty: 'intermediate', protocol: 'Squats supersetted w/ Pullovers.', movements: ['Breathing Squat: 15-20', 'Pullover: 15-20 (Light)', 'Bench (interspersed)', 'Curls (interspersed)'], rounds: 3 },
-                { id: 'complex-a', title: 'Barbell Complex A', desc: 'Wrestler Strength.', equipment: 'Barbell', difficulty: 'advanced', protocol: '8 reps each. Bar does NOT touch ground.', movements: ['Bent Row', 'Power Clean', 'Front Squat', 'Mil Press', 'Back Squat', 'Good Morning'], rounds: 5 }
+                { id: 'es-classic', title: 'Easy Strength Classic', desc: '40-day protocol. Never fail.', equipment: 'Barbell', difficulty: 'beginner', protocol: '2x5. Leave fresh.', movements: ['Whole Body: DL/Swing', 'Push: Press/Bench', 'Pull: Pull-up/Row', 'Hinge/Squat', 'Carry'], rounds: 1 },
+                { id: 'reg-park-5x5', title: 'Reg Park 5x5', desc: 'Grandfather of strength.', equipment: 'Barbell', difficulty: 'beginner', protocol: '2 warm-up, 3x5 work.', movements: ['Squat 5x5', 'Chin-ups 5x5', 'Dip/Bench 5x5', 'DL 5x5', 'Curl 3x10'], rounds: 1 },
+                { id: 'mms-squat', title: 'Mass Made Simple (Lite)', desc: 'The "To 50" Squat Challenge.', equipment: 'Barbell', difficulty: 'advanced', protocol: 'Heavy upper body, high rep squats.', movements: ['Bench Press 3x5', 'Batwings 3x5', 'One-Arm Press 3x5', 'Bird Dog 2x10', 'Complex Warmup', 'High Rep Squats (Aim for 50 reps in fewest sets possible)'], rounds: 1 },
+                { id: 'abf-press-day', title: 'ABF: Press Day', desc: 'Heavy volume pressing.', equipment: 'Double KBs', difficulty: 'intermediate', protocol: 'Ladders 2-3-5.', movements: ['Dbl Press: Ladders', 'Pull-ups: Match', 'Goblet Sq: Light'], rounds: 5 },
+                { id: 'southwood', title: 'Southwood Program', desc: '4 day/week strength.', equipment: 'Barbell', difficulty: 'intermediate', protocol: '8-6-4 Reps.', movements: ['Clean', 'Press', 'F. Squat', 'Bench'], rounds: 1 },
+                { id: 'rop-heavy', title: 'Rite of Passage', desc: 'Ladder press program.', equipment: 'Single KB', difficulty: 'advanced', protocol: 'Ladders 1-5.', movements: ['C&P Ladders', 'Pull-ups', 'Swings (Dice Roll)'], rounds: 5 },
+                { id: 'complex-a', title: 'Barbell Complex A', desc: 'Wrestler Strength.', equipment: 'Barbell', difficulty: 'advanced', protocol: '8 reps. No drops.', movements: ['Row', 'Clean', 'F. Squat', 'Press', 'B. Squat', 'Good Morning'], rounds: 5 }
             ],
             ballistic: [
-                { id: 'humane-burpee', title: 'Humane Burpee', desc: 'Volume descends, HR ascends.', equipment: 'Kettlebell', difficulty: 'intermediate', protocol: '15 Swings, then Squat/Pushup ladder 5->1.', movements: ['15 Swings', 'Goblet Sq (5,4,3,2,1)', 'Pushups (5,4,3,2,1)', 'Repeat: 15 Swings between rungs'], rounds: 5 },
-                { id: 'eagle', title: 'The Eagle', desc: 'So simple, so hard.', equipment: 'Double KBs', difficulty: 'advanced', protocol: '8 Front Squats + 20m Rack Walk. Bells don\'t touch ground.', movements: ['8 Dbl Front Squats', '20m Farmer/Rack Carry', 'Do NOT drop bells.'], rounds: 8 },
-                { id: 'slurpees', title: 'Slurpees / Bearpees', desc: 'Metabolic density.', equipment: 'Kettlebell', difficulty: 'intermediate', protocol: 'Like Humane Burpee, replace Pushups.', movements: ['15 Swings', 'Goblet Sq (5->1)', 'Var: 10 Mtn Climbers OR Bear Crawl'], rounds: 5 },
-                { id: 'snatch-test', title: 'The Snatch Test', desc: '100 Reps in 5 mins.', equipment: '24kg/16kg KB', difficulty: 'advanced', protocol: 'Goal: < 5 Minutes.', movements: ['20L / 20R', '15L / 15R', '10L / 10R', '5L / 5R'], rounds: 1 },
-                { id: 'ssst', title: 'Secret Service Snatch Test', desc: 'Elite work capacity.', equipment: '24kg KB', difficulty: 'advanced', protocol: '10 Min MAX Reps.', movements: ['Max Reps in 10:00', 'Std: >200 (Excellent)', 'Elite: >250'], rounds: 1 },
-                { id: 'cardio-clean', title: 'Cardio Clean Complex', desc: 'Grip-intensive gasser.', equipment: 'Single KB', difficulty: 'intermediate', protocol: 'Ladder L then R.', movements: ['L: 8Cl/3Sq', 'R: 8Cl/3Sq', 'L: 5Cl/2Sq', 'R: 5Cl/2Sq', 'L: 3Cl/1Sq', 'R: 3Cl/1Sq'], rounds: 1 },
-                { id: 'lift-n-sprint', title: 'Lift-n-Sprints', desc: 'Gear change drill.', equipment: 'Barbell/KB + Runner', difficulty: 'intermediate', protocol: '8-10 reps hinge/squat -> SPRINT.', movements: ['10 Heavy Swings/Cleans', '100m Sprint', 'Rest 2-3 min'], rounds: 5 }
+                { id: '10k-swing', title: '10,000 Swing Day', desc: 'The ultimate challenge.', equipment: 'Kettlebell', difficulty: 'advanced', protocol: '500 Swings total. Clusters of 10-15-25-50.', movements: ['Set 1: 10 Swings', 'Set 2: 15 Swings', 'Set 3: 25 Swings', 'Set 4: 50 Swings', 'Rest w/ 1 Strength Rep (Press/Dip)', 'Repeat 5 times (500 total)'], rounds: 5 },
+                { id: 'litvinov', title: 'Litvinov Sprints', desc: 'Brutal athleticism.', equipment: 'Barbell + Track', difficulty: 'advanced', protocol: 'Lift then RUN.', movements: ['8 Front Squats (Heavy)', '400m Sprint (Immediate)', 'Rest 3-5 min'], rounds: 3 },
+                { id: 'humane-burpee', title: 'Humane Burpee', desc: 'Volume descends.', equipment: 'Kettlebell', difficulty: 'intermediate', protocol: '15 Swings, Ladder 5->1.', movements: ['15 Swings', 'Goblet Sq (5->1)', 'Pushups (5->1)'], rounds: 5 },
+                { id: 'eagle', title: 'The Eagle', desc: '8 Front Squats + Carry.', equipment: 'Double KBs', difficulty: 'advanced', protocol: 'No drops.', movements: ['8 Dbl F. Squats', '20m Rack Carry'], rounds: 8 },
+                { id: 'snatch-test', title: 'The Snatch Test', desc: '100 Reps / 5 mins.', equipment: 'KB 24kg', difficulty: 'advanced', protocol: 'Time trial.', movements: ['20L/20R', '15L/15R', '10L/10R', '5L/5R'], rounds: 1 },
+                { id: 'lift-n-sprint', title: 'Lift-n-Sprints', desc: 'Gear change drill.', equipment: 'KB/Runner', difficulty: 'intermediate', protocol: '10 reps -> Sprint.', movements: ['10 Swings', '100m Sprint'], rounds: 5 }
             ],
             hybrid: [
-                { id: 'abc-double', title: 'Armor Building Complex', desc: 'The Gold Standard.', equipment: 'Double KBs', difficulty: 'intermediate', protocol: '2 Cleans, 1 Press, 3 FSQ. Goal: 30 Rnds/30min.', movements: ['2 Dbl Cleans', '1 Dbl Press', '3 Dbl FSQ'], rounds: 30 },
-                { id: 'abc-barbell', title: 'Barbell Armor Building', desc: 'Barbell adaptation of ABC.', equipment: 'Barbell', difficulty: 'intermediate', protocol: '2 Cl, 1 Pr, 3 FSQ. Continuous.', movements: ['2 Power Clean', '1 OH Press', '3 Front Squat', 'Rest 1-2 min'], rounds: 5 },
-                { id: 'complex-c', title: 'Barbell Complex C', desc: 'Explosive pulling/stability.', equipment: 'Barbell', difficulty: 'advanced', protocol: '5-8 Reps. Continuous.', movements: ['Hang Snatch', 'OH Squat', 'Back Squat', 'Good Morning', 'Row', 'Deadlift'], rounds: 3 },
-                { id: 'abc-single', title: 'Single KB ABC', desc: 'Asymmetry focus.', equipment: 'Single KB', difficulty: 'beginner', protocol: 'Full sequence L+R.', movements: ['(L) 1 C&P', '(R) 1 C&P', '2 Goblet Sq', '-- Park --', '(R) 1 C&P', '(L) 1 C&P', '2 Goblet Sq'], rounds: 10 },
-                { id: 'rbc', title: 'Running Back Complex', desc: 'Descending ladder.', equipment: 'Double KBs', difficulty: 'advanced', protocol: 'Ladder 5->1. Bells up.', movements: ['Dbl Cleans (5->1)', 'Front Squats (5->1)', 'No drop.'], rounds: 5 },
-                { id: 'sparhawk', title: 'The Sparhawk', desc: 'Squat/Carry Density.', equipment: 'Single KB (32kg)', difficulty: 'intermediate', protocol: 'Squat 8->1. Carry between.', movements: ['Goblet Sq (8,7...1)', 'Suitcase Carry L (20m)', 'Suitcase Carry R (20m)'], rounds: 8 },
-                { id: 'cook-drill', title: 'The Cook Drill', desc: 'Integrity under load.', equipment: 'Single KB', difficulty: 'beginner', protocol: 'Walk until form breaks.', movements: ['Waiter Walk', 'Rack Walk', 'Suitcase Walk', 'Var: "CookED" add 10 swings'], rounds: 3 },
-                { id: 'bear-bear', title: 'Bear / Bear', desc: 'Collision conditioning.', equipment: 'Bag/Partner', difficulty: 'intermediate', protocol: 'Crawl/Carry distance.', movements: ['Bear Crawl (20-40m)', 'Bear Hug Carry (40-60m)'], rounds: 5 },
-                { id: 'carry-everything', title: 'Loaded Carry "Everything"', desc: 'Festival of carries.', equipment: 'Sled, KBs, Pack', difficulty: 'advanced', protocol: 'Progressive loading.', movements: ['Suitcase', 'Farmer', 'Suitcase+Pack', 'Farmer+Pack', 'Sled Drag', 'Sled+Bearhug', 'Sled+Pack+Farmer'], rounds: 1 }
+                { id: 'abc-double', title: 'Armor Building Complex', desc: '2 Cl, 1 Pr, 3 Sq.', equipment: 'Double KBs', difficulty: 'intermediate', protocol: 'EMOM or continuous.', movements: ['2 Cleans', '1 Press', '3 Front Squats'], rounds: 20 },
+                { id: 'abc-single', title: 'Single KB ABC', desc: 'Asymmetry focus.', equipment: 'Single KB', difficulty: 'beginner', protocol: 'L -> R -> Sq.', movements: ['(L) 1 C&P', '(R) 1 C&P', '2 Goblet Sq'], rounds: 10 },
+                { id: 'sparhawk', title: 'The Sparhawk', desc: 'Squat ladder w/ carries.', equipment: 'Single KB', difficulty: 'intermediate', protocol: 'Squat 8->1.', movements: ['Goblet Sq', 'Suitcase Carry L+R'], rounds: 8 },
+                { id: 'carry-everything', title: 'Loaded Carry Day', desc: 'Festival of carries.', equipment: 'Various', difficulty: 'advanced', protocol: '1 set each.', movements: ['Suitcase', 'Farmer', 'Ruck', 'Sled', 'Bearhug'], rounds: 1 }
             ],
             tonic: [
-                { id: 'plenty-of-nothing', title: 'I Got Plenty of Nothing!', desc: 'Foundational bodyweight work.', equipment: 'Floor', difficulty: 'beginner', protocol: '1-3 rounds. Quality focus.', movements: ['Push-ups/Planks: 10-20', 'Supermans: 10', 'Hip Thrusts: 10-20', 'BW Squats: 10-20', 'Ab Roll-ups: 10', 'Finish: Brisk Walk'], rounds: 3 },
-                { id: 'life-model', title: 'Life Model Template', desc: 'Crawl to rise.', equipment: 'Floor', difficulty: 'beginner', protocol: 'Restorative. Smooth.', movements: ['Naked TGU (5-10m)', 'Half-Kneel Press (Unloaded)', 'Bird Dogs', 'OS: Rocks/Nods', 'Finish: Naked TGU'], rounds: 1 },
-                { id: 'humane-burpee-bw', title: 'Humane Burpee (BW)', desc: 'Metabolic density.', equipment: 'Floor', difficulty: 'intermediate', protocol: '15 Hinge, Ladder 10->1.', movements: ['15 Hinge (Get-back-ups)', 'Squats (10->1)', 'Pushups (10->1)'], rounds: 10 },
-                { id: 'os-reset', title: 'OS Reset Complex', desc: 'Nervous system reset.', equipment: 'Floor', difficulty: 'beginner', protocol: '20 min flow.', movements: ['Prone Neck Nods', 'Look for Shoes', '6-Pt Rocking', 'Grizzly Crawl', 'Egg Rolls (~50)'], rounds: 1 },
-                { id: 'floor-workout', title: 'The Floor Workout', desc: 'Getting up and down.', equipment: 'Floor', difficulty: 'intermediate', protocol: 'Get down, get up. Repeat.', movements: ['Get Down', 'Floor Mobility', 'Get Up', 'Repeat'], rounds: 20 }
+                { id: 'plenty-of-nothing', title: 'I Got Plenty of Nothing!', desc: 'Foundational BW.', equipment: 'Floor', difficulty: 'beginner', protocol: 'Quality focus.', movements: ['Push-ups', 'Supermans', 'Hip Thrusts', 'Squats', 'Roll-ups', 'Walk'], rounds: 3 },
+                { id: 'life-model', title: 'Life Model', desc: 'Crawl to rise.', equipment: 'Floor', difficulty: 'beginner', protocol: 'Restorative.', movements: ['Naked TGU', 'Kneeling Press', 'Bird Dog', 'OS Rocks'], rounds: 1 },
+                { id: 'os-reset', title: 'OS Reset', desc: 'Nervous system.', equipment: 'Floor', difficulty: 'beginner', protocol: '20 min flow.', movements: ['Nods', 'Rocks', 'Crawl', 'Rolls'], rounds: 1 }
             ],
             ruck: [
-                { id: 'ruck-15m', title: 'The Morning Reset (1.5 Mi)', desc: 'Short, restorative. 1.5 Miles / 2.5 KM.', equipment: 'Ruck', difficulty: 'beginner', protocol: 'Conversation pace. Green light.', table: [ { load: '10 lbs', beginner: '30:00', moderate: '25:30', advanced: '22:30' }, { load: '20 lbs', beginner: '30:00', moderate: '25:30', advanced: '22:30' }, { load: '30 lbs', beginner: '30:00', moderate: '25:30', advanced: '22:30' }, { load: '45 lbs', beginner: '30:00', moderate: '25:30', advanced: '22:30' } ], movements: ['Flush stiffness', 'Pace: 15-20 min/mi', 'Focus: Posture'], rounds: 1 },
-                { id: 'ruck-3k', title: 'The Standard 3K (1.9 Mi)', desc: 'Sweat & recover. 1.9 Miles / 3 KM.', equipment: 'Ruck', difficulty: 'intermediate', protocol: 'Zone 2 HR.', table: [ { load: '10 lbs', beginner: '37:00', moderate: '32:00', advanced: '28:00' }, { load: '20 lbs', beginner: '37:00', moderate: '32:00', advanced: '28:00' }, { load: '30 lbs', beginner: '37:00', moderate: '32:00', advanced: '28:00' }, { load: '45 lbs', beginner: '37:00', moderate: '32:00', advanced: '28:00' } ], movements: ['Sweat & Recover', 'Pace: Steady', 'Focus: Breath'], rounds: 1 },
-                { id: 'ruck-5k', title: 'The 5K Ruck (3.1 Mi)', desc: 'Endurance. 45lbs = Training.', equipment: 'Ruck', difficulty: 'advanced', protocol: 'Monitor hotspots.', table: [ { load: '10 lbs', beginner: '1h 02m', moderate: '53:00', advanced: '46:30' }, { load: '20 lbs', beginner: '1h 02m', moderate: '53:00', advanced: '46:30' }, { load: '30 lbs', beginner: '1h 02m', moderate: '53:00', advanced: '46:30' }, { load: '45 lbs', beginner: '1h 02m', moderate: '53:00', advanced: '46:30' } ], movements: ['Endurance', 'Pace: Sustainable', 'Focus: Grit'], rounds: 1 },
-                { id: 'ruck-5m', title: 'The Long Haul (5 Mi)', desc: 'Weekend challenge.', equipment: 'Ruck', difficulty: 'advanced', protocol: 'Bring water. 90+ mins.', table: [ { load: '10 lbs', beginner: '1h 40m', moderate: '1h 25m', advanced: '1h 15m' }, { load: '20 lbs', beginner: '1h 40m', moderate: '1h 25m', advanced: '1h 15m' }, { load: '30 lbs', beginner: '1h 40m', moderate: '1h 25m', advanced: '1h 15m' }, { load: '45 lbs', beginner: '1h 40m', moderate: '1h 25m', advanced: '1h 15m' } ], movements: ['Volume', 'Pace: Consistent', 'Focus: Durability'], rounds: 1 }
+                { id: 'ruck-15m', title: '1.5 Miles (Reset)', desc: 'Restorative.', equipment: 'Ruck', difficulty: 'beginner', protocol: 'Green light pace.', table: [{load:'10lb',time:'30:00'},{load:'45lb',time:'22:30'}], movements: ['1.5 Miles', 'Posture Focus'], rounds: 1 },
+                { id: 'ruck-3k', title: '3.0 KM (Standard)', desc: 'Sweat & Recover.', equipment: 'Ruck', difficulty: 'intermediate', protocol: 'Zone 2.', table: [{load:'30lb',time:'32:00'}], movements: ['3.0 KM', 'Steady Pace'], rounds: 1 },
+                { id: 'ruck-5k', title: '5.0 KM (Endurance)', desc: 'Training session.', equipment: 'Ruck', difficulty: 'advanced', protocol: 'Hydrate.', table: [{load:'30lb',time:'53:00'}], movements: ['5.0 KM', 'Grind'], rounds: 1 },
+                { id: 'ruck-5m', title: '5.0 Miles (Long)', desc: 'Weekend Challenge.', equipment: 'Ruck', difficulty: 'advanced', protocol: '90+ mins.', table: [{load:'30lb',time:'1h 25m'}], movements: ['5.0 Miles', 'Durability'], rounds: 1 }
             ]
         };
 
         const REBUILD_PATHWAY = {
-            overview: "A 12-week graduated return-to-play protocol. Starts with nervous system regulation, ends with full conditioning. Do not skip steps.",
+            overview: "12-week return-to-play. Reasonable, Repeatable, Doable.",
             weeks: [
-                { week: 1, title: 'Week 1: The Breath', context: 'Regulate nervous system. No heavy loading.', movements: ['1-Min Meditation', 'OS: Neck Nods (1 min)', 'OS: Rocking (1 min)', 'Walk: 15 min Brisk'] },
-                { week: 2, title: 'Week 2: Awakening', context: 'Reintroduce range of motion.', movements: ['1-Min Meditation', 'OS: Rocking + Nods', 'Hang: 30 sec', 'Squat Hold: 30 sec', 'Walk: 20 min'] },
-                { week: 3, title: 'Week 3: Patterning', context: 'Light load to test patterns.', movements: ['Daily Mobility Two', 'Goblet Sq: 1x5 (Light)', 'Suitcase Carry: 20m L/R', 'Walk: 20 min'] },
-                { week: 4, title: 'Week 4: Checkpoint', context: 'Integrity check.', movements: ['Daily Mobility Two', 'Goblet Sq: 2x5', 'Suitcase Carry: 40m L/R', 'OS: Egg Rolls (20)', 'Walk: 30 min'] },
-                { week: 5, title: 'Week 5: Tension', context: '3x3 Rule. Rebuild structure.', movements: ['HK Press: 3x3', 'Asst Pull-up: 3x3', 'Hip Thrust: 3x10', 'Suitcase Carry: Heavy 20m'] },
-                { week: 6, title: 'Week 6: Stability', context: 'Maintain tension under fatigue.', movements: ['HK Press: 3x3', 'Asst Pull-up: 3x3', 'Swing: 3x10', 'Suitcase Carry: Heavy 30m'] },
-                { week: 7, title: 'Week 7: Volume', context: 'Shift to 2x5.', movements: ['HK Press: 2x5', 'Pull-up/Row: 2x5', 'Swing: 2x15', 'Farmer Carry (2 Hands)'] },
-                { week: 8, title: 'Week 8: Capacity', context: 'Test strength. Feel Strong.', movements: ['HK Press: 2x5 (Load)', 'Pull-up: 2x5', 'Goblet Sq: 2x10', 'Farmer Carry: Dist'] },
-                { week: 9, title: 'Week 9: Integration', context: '"Perfect Workout" structure.', movements: ['[A] 3x: Press(8)+Hang', '[B] 1x: Goblet(8)+Swing(15)+Carry', 'Finish: Walk'] },
-                { week: 10, title: 'Week 10: Density', context: 'Minimize rest in A.', movements: ['[A] 3x: Press(8)+Hang', '[B] 1x: Goblet(10)+Swing(20)+Carry', 'Finish: Walk'] },
-                { week: 11, title: 'Week 11: Load', context: 'Heavier bell.', movements: ['[A] 3x: Press(5 Heavy)+Hang', '[B] 1x: Goblet(10)+Swing(25)+Carry', 'Finish: Walk'] },
-                { week: 12, title: 'Week 12: Graduation', context: 'Ready for Easy Strength.', movements: ['[A] 3x: Press(5)+Pull(5)', '[B] 2x: Goblet(10)+Swing(25)', 'Congratulations.'] }
+                { week: 1, title: 'Week 1: Breath', context: 'Regulate system.', movements: ['Meditation', 'OS Nods', 'Walk'] },
+                { week: 2, title: 'Week 2: Awakening', context: 'Range of motion.', movements: ['Hang 30s', 'Squat Hold 30s', 'Walk'] },
+                { week: 3, title: 'Week 3: Patterning', context: 'Light load.', movements: ['Goblet Sq 1x5', 'Carry 20m', 'Walk'] },
+                { week: 4, title: 'Week 4: Checkpoint', context: 'Integrity.', movements: ['Goblet Sq 2x5', 'Carry 40m', 'Walk'] },
+                { week: 5, title: 'Week 5: Tension', context: '3x3 Rule.', movements: ['HK Press 3x3', 'Pull-up 3x3', 'Hip Thrust 3x10'] },
+                { week: 6, title: 'Week 6: Stability', context: 'Fatigue mgmt.', movements: ['HK Press 3x3', 'Swing 3x10', 'Carry'] },
+                { week: 7, title: 'Week 7: Volume', context: 'Shift to 2x5.', movements: ['HK Press 2x5', 'Pull-up 2x5', 'Swing 2x15'] },
+                { week: 8, title: 'Week 8: Capacity', context: 'Test strength.', movements: ['HK Press 2x5+', 'Goblet 2x10', 'Carry'] },
+                { week: 9, title: 'Week 9: Integration', context: 'Perfect Workout.', movements: ['[A] Press+Hang', '[B] Sq+Swing+Carry'] },
+                { week: 10, title: 'Week 10: Density', context: 'Min Rest.', movements: ['[A] 3 Rnds', '[B] Higher Reps'] },
+                { week: 11, title: 'Week 11: Load', context: 'Heavier.', movements: ['[A] Heavy Press', '[B] Heavy Swing'] },
+                { week: 12, title: 'Week 12: Grad', context: 'Ready.', movements: ['[A] 3 Rnds', '[B] 2 Rnds'] }
             ]
         };
 
-        // --- 2. STATE MANAGEMENT & PRIVACY ---
-        
-        let state = {
-            currentTab: 'home', 
-            activeWorkout: null,
-            activeRebuildWeek: null, 
-            warmupActive: false,
-            checklist: {}, 
-            ...loadState()
-        };
+        // --- 2. STATE & API ---
+        let state = { currentTab: 'home', activeWorkout: null, activeRebuildWeek: null, warmupActive: false, checklist: {}, timer: 0, timerRunning: false, history: [], chatHistory: [], ...loadState() };
+        let timerInterval;
 
-        function loadState() {
-            try {
-                const stored = localStorage.getItem(STORAGE_KEY);
-                return stored ? JSON.parse(stored) : {};
-            } catch (e) {
-                console.warn("Storage disabled (Privacy Mode)");
-                return {};
-            }
-        }
+        function loadState() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch(e) { return {}; } }
+        function saveState() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {} }
 
-        function saveState() {
-            try {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify({
-                    currentTab: state.currentTab,
-                    activeWorkout: state.activeWorkout,
-                    activeRebuildWeek: state.activeRebuildWeek,
-                    checklist: state.checklist
-                }));
-            } catch (e) {
-                // Fail silently in private mode
-            }
-        }
-
-        // --- 3. UI ICONS & HELPERS ---
-        
+        // --- 3. ICONS ---
         const Icons = {
-            Home: '<i data-lucide="home" class="w-5 h-5"></i>',
-            Dumbbell: '<i data-lucide="dumbbell" class="w-5 h-5"></i>',
-            Zap: '<i data-lucide="zap" class="w-5 h-5"></i>',
-            Activity: '<i data-lucide="activity" class="w-5 h-5"></i>',
-            Shuffle: '<i data-lucide="shuffle" class="w-6 h-6"></i>',
-            ChevronLeft: '<i data-lucide="chevron-left" class="w-6 h-6"></i>',
-            Check: '<i data-lucide="check" class="w-4 h-4 text-white hidden"></i>',
-            Info: '<i data-lucide="info" class="w-5 h-5"></i>',
-            Leaf: '<i data-lucide="leaf" class="w-5 h-5"></i>',
-            Dices: '<i data-lucide="dices" class="w-8 h-8"></i>',
-            Flame: '<i data-lucide="flame" class="w-5 h-5"></i>',
-            X: '<i data-lucide="x" class="w-6 h-6"></i>',
-            Calendar: '<i data-lucide="calendar" class="w-5 h-5"></i>',
-            DiffEasy: '<span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>',
-            DiffMed: '<span class="inline-block w-2 h-2 rounded-full bg-yellow-500"></span>',
-            DiffHard: '<span class="inline-block w-2 h-2 rounded-full bg-red-600"></span>',
-            Tonic: '<i data-lucide="heart-pulse" class="w-5 h-5"></i>',
-            Footprints: '<i data-lucide="footprints" class="w-4 h-4"></i>',
-            Trash: '<i data-lucide="trash-2" class="w-4 h-4"></i>',
-            Save: '<i data-lucide="save" class="w-4 h-4"></i>'
+            Home: '<i data-lucide="home" class="w-5 h-5"></i>', Dumbbell: '<i data-lucide="dumbbell" class="w-5 h-5"></i>', Zap: '<i data-lucide="zap" class="w-5 h-5"></i>', Activity: '<i data-lucide="activity" class="w-5 h-5"></i>', Shuffle: '<i data-lucide="shuffle" class="w-6 h-6"></i>', ChevronLeft: '<i data-lucide="chevron-left" class="w-6 h-6"></i>', Check: '<i data-lucide="check" class="w-4 h-4 text-white hidden"></i>', Info: '<i data-lucide="info" class="w-5 h-5"></i>', Leaf: '<i data-lucide="leaf" class="w-5 h-5"></i>', Dices: '<i data-lucide="dices" class="w-8 h-8"></i>', Flame: '<i data-lucide="flame" class="w-5 h-5"></i>', X: '<i data-lucide="x" class="w-6 h-6"></i>', Calendar: '<i data-lucide="calendar" class="w-5 h-5"></i>', History: '<i data-lucide="clock" class="w-5 h-5"></i>', Footprints: '<i data-lucide="footprints" class="w-4 h-4"></i>', Trash: '<i data-lucide="trash-2" class="w-4 h-4"></i>', Save: '<i data-lucide="save" class="w-4 h-4"></i>', Timer: '<i data-lucide="timer" class="w-6 h-6"></i>', Sparkles: '<i data-lucide="sparkles" class="w-5 h-5"></i>', Send: '<i data-lucide="send" class="w-5 h-5"></i>'
         };
 
-        function getDifficultyIcon(diff) {
-            if (diff === 'beginner') return Icons.DiffEasy;
-            if (diff === 'intermediate') return Icons.DiffMed;
-            if (diff === 'advanced') return Icons.DiffHard;
-            return '';
-        }
-        
-        function getIconForTab(tab) {
-            if (tab === 'grind') return Icons.Dumbbell;
-            if (tab === 'ballistic') return Icons.Zap;
-            if (tab === 'hybrid') return Icons.Activity;
-            if (tab === 'rebuild') return Icons.Leaf;
-            if (tab === 'tonic') return Icons.Tonic;
-            if (tab === 'ruck') return Icons.Footprints;
-            return Icons.Dumbbell;
-        }
+        function getDifficultyIcon(diff) { return diff === 'beginner' ? '<span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>' : diff === 'intermediate' ? '<span class="inline-block w-2 h-2 rounded-full bg-yellow-500"></span>' : '<span class="inline-block w-2 h-2 rounded-full bg-red-600"></span>'; }
+        function getIconForTab(tab) { if(tab==='grind') return Icons.Dumbbell; if(tab==='ballistic') return Icons.Zap; if(tab==='hybrid') return Icons.Activity; if(tab==='rebuild') return Icons.Leaf; if(tab==='tonic') return Icons.Tonic; if(tab==='ruck') return Icons.Footprints; if(tab==='history') return Icons.History; return Icons.Dumbbell; }
 
-        function getWorkoutCategory(id) {
-            for (const [cat, list] of Object.entries(WORKOUTS)) {
-                if (list.find(w => w.id === id)) return cat.charAt(0).toUpperCase() + cat.slice(1);
-            }
-            if(id.startsWith('rebuild-week-')) return 'Rebuild';
-            return 'Unknown';
-        }
-
-        // --- 4. RENDER LOGIC ---
-
+        // --- 4. RENDER ---
         function render() {
             const app = document.getElementById('app');
             let html = `
                 <div class="pt-safe-top bg-zinc-900 border-b border-zinc-800 sticky top-0 z-50">
                     <div class="h-14 flex items-center justify-between px-4">
-                        ${state.activeWorkout 
-                            ? `<button id="btn-exit" class="p-2 -ml-2 text-zinc-400 hover:text-white">${Icons.ChevronLeft}</button>`
-                            : `<button id="btn-warmup" class="p-2 -ml-2 text-zinc-400 hover:text-red-500">${Icons.Flame}</button>` 
-                        }
+                        ${state.activeWorkout ? `<button onclick="APP.exitWorkout()" class="p-2 -ml-2 text-zinc-400 hover:text-white">${Icons.ChevronLeft}</button>` : `<button onclick="APP.toggleWarmup()" class="p-2 -ml-2 text-zinc-400 hover:text-red-500">${Icons.Flame}</button>`}
                         <h1 class="text-lg font-bold tracking-tight text-white uppercase italic">The Iron Garage</h1>
-                        <button id="btn-info" class="p-2 -mr-2 text-zinc-400 hover:text-white">${Icons.Info}</button>
+                        <button onclick="APP.showInventory()" class="p-2 -mr-2 text-zinc-400 hover:text-white">${Icons.Info}</button>
                     </div>
                 </div>
-                <div class="flex-1 overflow-y-auto overflow-x-hidden hide-scrollbar pb-safe-bottom bg-zinc-950 relative">
-            `;
-
-            if (state.warmupActive) {
-                html += renderWarmup();
-            } else if (state.activeWorkout) {
-                html += renderActiveWorkout();
-            } else {
-                html += renderDashboard();
-            }
-
+                <div class="flex-1 overflow-y-auto overflow-x-hidden hide-scrollbar pb-safe-bottom bg-zinc-950 relative">`;
+            
+            if (state.warmupActive) html += renderWarmup();
+            else if (state.activeWorkout) html += renderActiveWorkout();
+            else html += renderDashboard();
+            
+            if(state.activeWorkout) html += renderFloatingTimer();
+            
             html += `</div>`;
             app.innerHTML = html;
-            
-            // Re-attach listeners (Delegation would be better but simple re-bind works for this scale)
-            attachGlobalListeners();
             lucide.createIcons();
+            
+            // Scroll chat to bottom if open
+            const chatContainer = document.getElementById('chat-container');
+            if(chatContainer) chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function renderFloatingTimer() {
+            const mins = Math.floor(state.timer / 60).toString().padStart(2, '0');
+            const secs = (state.timer % 60).toString().padStart(2, '0');
+            return `
+                <button onclick="APP.toggleTimer()" class="floating-timer bg-zinc-800 border border-zinc-700 text-white rounded-full h-14 pl-4 pr-5 flex items-center gap-2 shadow-xl shadow-black/50 active:scale-95 transition-transform">
+                    <span class="${state.timerRunning ? 'text-red-500 animate-pulse' : 'text-zinc-400'}">${Icons.Timer}</span>
+                    <span class="font-mono text-lg font-bold">${mins}:${secs}</span>
+                </button>`;
         }
 
         function renderWarmup() {
-            return `
-                <div class="p-6 space-y-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-2xl font-black text-white uppercase">Daily Warm-up</h2>
-                        <button id="btn-close-warmup" class="text-zinc-400 hover:text-white">${Icons.X}</button>
-                    </div>
-                    <div class="space-y-4">
-                        <div class="text-sm text-zinc-500 font-mono mb-2 uppercase tracking-widest">The 5 Steps</div>
-                        ${WARMUP_ROUTINE.map(step => `
-                            <div class="bg-zinc-900 border border-zinc-800 p-4 rounded-xl">
-                                <h3 class="text-red-500 font-bold uppercase text-sm mb-1">${step.title}</h3>
-                                <p class="text-zinc-300 text-sm leading-snug">${step.desc}</p>
-                            </div>
-                        `).join('')}
-                    </div>
-                    <button id="btn-ready" class="w-full bg-zinc-100 text-zinc-900 font-bold py-4 rounded-xl mt-8">Ready to Lift</button>
-                </div>
-            `;
+            return `<div class="p-6 space-y-6"><div class="flex justify-between items-center mb-4"><h2 class="text-2xl font-black text-white uppercase">Daily Warm-up</h2><button onclick="APP.toggleWarmup()" class="text-zinc-400 hover:text-white">${Icons.X}</button></div><div class="space-y-4">${WARMUP_ROUTINE.map(s=>`<div class="bg-zinc-900 border border-zinc-800 p-4 rounded-xl"><h3 class="text-red-500 font-bold uppercase text-sm mb-1">${s.title}</h3><p class="text-zinc-300 text-sm leading-snug">${s.desc}</p></div>`).join('')}</div><button onclick="APP.toggleWarmup()" class="w-full bg-zinc-100 text-zinc-900 font-bold py-4 rounded-xl mt-8">Ready to Lift</button></div>`;
         }
 
         function renderDashboard() {
-            const tabs = ['home', 'grind', 'ballistic', 'hybrid', 'tonic', 'ruck', 'rebuild'];
-            let navHtml = `<div class="flex border-b border-zinc-800 bg-zinc-900 sticky top-0 z-40 overflow-x-auto hide-scrollbar">`;
-            
-            tabs.forEach(tab => {
-                let activeClass = 'tab-inactive';
-                if (state.currentTab === tab) {
-                    if (tab === 'rebuild') activeClass = 'tab-active-rebuild';
-                    else if (tab === 'tonic') activeClass = 'tab-active-tonic';
-                    else if (tab === 'ruck') activeClass = 'tab-active-ruck';
-                    else activeClass = 'tab-active';
-                }
-                const label = tab === 'home' ? Icons.Home : tab;
-                const style = tab === 'home' ? 'flex justify-center min-w-[60px]' : 'text-xs font-bold uppercase tracking-wider text-center min-w-[80px]';
-                navHtml += `<button data-tab="${tab}" class="flex-1 py-4 ${style} ${activeClass}">${label}</button>`;
+            const tabs = ['home','grind','ballistic','hybrid','tonic','ruck','rebuild','history'];
+            let nav = `<div class="flex border-b border-zinc-800 bg-zinc-900 sticky top-0 z-40 overflow-x-auto hide-scrollbar">`;
+            tabs.forEach(t => {
+                let cls = state.currentTab===t ? (t==='rebuild'?'tab-active-rebuild':t==='tonic'?'tab-active-tonic':t==='ruck'?'tab-active-ruck':t==='history'?'tab-active-history':'tab-active') : 'tab-inactive';
+                nav += `<button onclick="APP.switchTab('${t}')" class="flex-1 py-4 ${t==='home'?'flex justify-center min-w-[60px]':'text-xs font-bold uppercase tracking-wider text-center min-w-[80px]'} ${cls}">${t==='home'?Icons.Home:t}</button>`;
             });
-            navHtml += `</div>`;
+            nav += `</div>`;
 
-            if (state.currentTab === 'home') return navHtml + renderHome();
-            if (state.currentTab === 'rebuild') return navHtml + renderRebuildHub();
-            
-            let contentHtml = '';
-            
-            // Ruck Specific Header
-            if (state.currentTab === 'ruck') {
-                contentHtml += `
-                    <div class="p-4 space-y-4">
-                        <div class="bg-zinc-900 border border-amber-900/30 p-5 rounded-2xl">
-                             <h2 class="text-xl font-bold text-white mb-3 flex items-center gap-2">
-                                <span class="text-amber-500">${Icons.Footprints}</span>
-                                Mission Brief
-                            </h2>
-                            <div class="space-y-4 text-sm text-zinc-400">
-                                <div><strong class="text-zinc-200 block mb-1">Setup</strong>Pack high & tight. Thick straps.</div>
-                                <div><strong class="text-zinc-200 block mb-1">Rules</strong>Don't Run. Posture First. Talk Test.</div>
-                            </div>
-                        </div>
-                `;
-            } else if (state.currentTab !== 'tonic') {
-                 contentHtml += `
-                <div class="px-4 pt-6 pb-2">
-                    <button id="btn-random-tab" class="w-full bg-gradient-to-r from-red-600 to-red-700 active:from-red-700 active:to-red-800 text-white rounded-xl py-4 shadow-lg shadow-red-900/20 flex items-center justify-center gap-2 transition-transform active:scale-[0.98]">
-                        ${Icons.Shuffle} <span class="font-bold uppercase tracking-wide">Roll the Dice: ${state.currentTab}</span>
-                    </button>
-                </div>`;
-            }
+            if(state.currentTab==='home') return nav + renderHome();
+            if(state.currentTab==='rebuild') return nav + renderRebuildHub();
+            if(state.currentTab==='history') return nav + renderHistory();
 
-            contentHtml += `<div class="p-4 space-y-3"><div class="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Available Protocols</div>`;
+            let content = '';
+            if(state.currentTab==='ruck') content += `<div class="p-4"><div class="bg-zinc-900 border border-amber-900/30 p-4 rounded-2xl mb-4 text-sm text-zinc-400"><strong class="text-amber-500 block mb-1">Ruck Rules</strong>Don't Run. Posture First. Talk Test.</div>`;
+            else if(state.currentTab!=='tonic') content += `<div class="px-4 pt-6 pb-2"><button onclick="APP.randomizeInTab('${state.currentTab}')" class="w-full bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl py-4 shadow-lg flex items-center justify-center gap-2">${Icons.Shuffle}<span class="font-bold uppercase">Roll Dice: ${state.currentTab}</span></button></div>`;
             
+            content += `<div class="p-4 space-y-3">`;
             WORKOUTS[state.currentTab].forEach(w => {
-                 contentHtml += `
-                    <div onclick="window.appActions.selectWorkout('${w.id}')" class="bg-zinc-900 border border-zinc-800 rounded-xl p-4 active:bg-zinc-800 transition-colors cursor-pointer relative overflow-hidden group hover:border-zinc-700">
-                        <div class="absolute top-0 right-0 p-2">${getDifficultyIcon(w.difficulty)}</div>
-                        <div class="flex justify-between items-start mb-1 pr-6"><h3 class="text-white font-bold text-lg group-hover:text-red-500 transition-colors">${w.title}</h3></div>
-                        ${w.rounds ? `<div class="mb-2"><span class="text-xs bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded border border-zinc-700">${w.rounds > 1 ? w.rounds + ' Rnds' : 'Checklist'}</span></div>` : ''}
-                        <p class="text-zinc-400 text-sm leading-snug mb-3">${w.desc}</p>
-                        <div class="flex items-center gap-2 text-xs text-zinc-500">${getIconForTab(state.currentTab)}<span>${w.equipment}</span></div>
-                    </div>
-                `;
+                content += `<div onclick="APP.selectWorkout('${w.id}')" class="bg-zinc-900 border border-zinc-800 rounded-xl p-4 cursor-pointer relative group"><div class="absolute top-0 right-0 p-2">${getDifficultyIcon(w.difficulty)}</div><h3 class="text-white font-bold text-lg">${w.title}</h3><p class="text-zinc-400 text-sm mb-2">${w.desc}</p><div class="flex items-center gap-2 text-xs text-zinc-500">${getIconForTab(state.currentTab)}<span>${w.equipment}</span></div></div>`;
             });
-            contentHtml += `</div>`;
-            
-            if (state.currentTab === 'ruck') contentHtml += `</div>`; // Close ruck wrapper
-
-            return navHtml + contentHtml;
+            content += `</div>`;
+            if(state.currentTab==='ruck') content += `</div>`;
+            return nav + content;
         }
 
         function renderRebuildHub() {
-            if (state.activeRebuildWeek !== null) {
-                const weekData = REBUILD_PATHWAY.weeks.find(w => w.week === state.activeRebuildWeek);
-                return `
-                    <div class="p-6">
-                        <button onclick="window.appActions.clearRebuildWeek()" class="flex items-center text-emerald-500 text-sm font-bold mb-4">${Icons.ChevronLeft} Back to Roadmap</button>
-                        <div class="bg-zinc-900 border border-emerald-900/30 p-6 rounded-2xl mb-6 shadow-lg shadow-emerald-900/10">
-                            <div class="flex items-center gap-3 mb-4">
-                                <div class="p-2 bg-emerald-900/20 text-emerald-500 rounded-lg">${Icons.Calendar}</div>
-                                <div><h2 class="text-xl font-bold text-white">${weekData.title}</h2><p class="text-xs text-emerald-400 font-mono uppercase">Rebuild Phase</p></div>
-                            </div>
-                            <div class="mb-4"><h4 class="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2">Context</h4><p class="text-zinc-300 text-sm leading-relaxed">${weekData.context}</p></div>
-                        </div>
-                        <div class="space-y-4">
-                             <div class="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Prescribed Protocol</div>
-                             <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-                                <ul class="space-y-3">${weekData.movements.map(m => `<li class="flex items-start gap-3 text-zinc-200 text-sm"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-2 shrink-0"></span><span class="leading-relaxed">${m}</span></li>`).join('')}</ul>
-                                <div class="mt-6 pt-4 border-t border-zinc-800">
-                                    <button onclick="window.appActions.startRebuildSession(${state.activeRebuildWeek})" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg uppercase tracking-wide text-sm">Start Session</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
+            if(state.activeRebuildWeek!==null) {
+                const w = REBUILD_PATHWAY.weeks.find(x=>x.week===state.activeRebuildWeek);
+                return `<div class="p-6"><button onclick="APP.clearRebuildWeek()" class="flex items-center text-emerald-500 text-sm font-bold mb-4">${Icons.ChevronLeft} Roadmap</button><div class="bg-zinc-900 border border-emerald-900/30 p-6 rounded-2xl mb-6"><h2 class="text-xl font-bold text-white">${w.title}</h2><p class="text-zinc-300 text-sm mt-2">${w.context}</p></div><div class="bg-zinc-900 border border-zinc-800 rounded-xl p-4"><ul class="space-y-3">${w.movements.map(m=>`<li class="flex gap-3 text-zinc-200 text-sm"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-2 shrink-0"></span>${m}</li>`).join('')}</ul><button onclick="APP.startRebuildSession(${w.week})" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg mt-6 uppercase text-sm">Start</button></div></div>`;
             }
-
-            return `
-                <div class="p-6 space-y-6">
-                    <div class="bg-zinc-900 p-5 rounded-2xl border border-zinc-800">
-                        <h2 class="text-xl font-bold text-white mb-2 flex items-center gap-2"><span class="text-emerald-500">${Icons.Leaf}</span>Mission Brief</h2>
-                        <p class="text-zinc-400 text-sm leading-relaxed">${REBUILD_PATHWAY.overview}</p>
-                    </div>
-                    <div class="space-y-6">
-                        ${[1, 2, 3].map(phase => `
-                            <div>
-                                <div class="text-xs font-bold text-emerald-500 uppercase tracking-widest mb-3 pl-1">Phase ${phase}</div>
-                                <div class="grid grid-cols-4 gap-2">
-                                    ${[1,2,3,4].map(i => {
-                                        const wk = (phase-1)*4 + i;
-                                        return `<button onclick="window.appActions.setRebuildWeek(${wk})" class="aspect-square bg-zinc-900 border border-zinc-800 rounded-xl flex flex-col items-center justify-center hover:border-emerald-500 hover:bg-zinc-800 transition-all"><span class="text-[10px] text-zinc-500 uppercase">Wk</span><span class="text-xl font-bold text-white">${wk}</span></button>`;
-                                    }).join('')}
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `;
+            return `<div class="p-6 space-y-6"><div class="bg-zinc-900 p-5 rounded-2xl border border-zinc-800"><h2 class="text-xl font-bold text-white mb-2 flex gap-2"><span class="text-emerald-500">${Icons.Leaf}</span>Mission Brief</h2><p class="text-zinc-400 text-sm">${REBUILD_PATHWAY.overview}</p></div><div class="grid grid-cols-4 gap-2">${REBUILD_PATHWAY.weeks.map(w=>`<button onclick="APP.setRebuildWeek(${w.week})" class="aspect-square bg-zinc-900 border border-zinc-800 rounded-xl flex flex-col items-center justify-center hover:border-emerald-500"><span class="text-[10px] text-zinc-500">WK</span><span class="text-xl font-bold text-white">${w.week}</span></button>`).join('')}</div></div>`;
         }
 
         function renderHome() {
+            const last = state.history.length > 0 ? state.history[state.history.length-1] : null;
             return `
-                <div class="p-6 flex flex-col gap-6 min-h-[80vh]">
-                    <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-8 flex flex-col items-center text-center space-y-5 shadow-xl shadow-black/50 mt-4">
-                        <div class="bg-red-900/10 p-5 rounded-full border border-red-900/30 text-red-500 ring-1 ring-red-900/20">${Icons.Dices}</div>
-                        <div class="space-y-1">
-                            <h2 class="text-2xl font-black text-white uppercase italic tracking-tight">Garage Roulette</h2>
-                            <p class="text-zinc-500 text-sm font-medium">Let the garage gods decide your fate.</p>
-                        </div>
-                        <button id="btn-random-global" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-4 rounded-xl uppercase tracking-wider transition-all active:scale-[0.98] shadow-lg shadow-red-900/40 text-sm flex items-center justify-center gap-2">
-                            ${Icons.Shuffle} Randomize All
-                        </button>
-                        <div class="flex gap-4 mt-2">
-                             <button onclick="window.appActions.wipeData()" class="text-[10px] text-zinc-600 hover:text-red-500 flex items-center gap-1">${Icons.Trash} Burn Data</button>
-                             <button onclick="window.appActions.exportData()" class="text-[10px] text-zinc-600 hover:text-white flex items-center gap-1">${Icons.Save} Backup</button>
-                        </div>
-                        <div class="text-[10px] text-zinc-700 font-mono mt-4">Build: ${APP_BUILD_DATE}</div>
-                        <div class="text-[9px] text-zinc-700 mt-1">Philosophy: Dan John</div>
+            <div class="p-6 flex flex-col gap-6 min-h-[80vh]">
+                <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-8 flex flex-col items-center text-center space-y-5 shadow-xl mt-4">
+                    <div class="bg-red-900/10 p-5 rounded-full border border-red-900/30 text-red-500">${Icons.Dices}</div>
+                    <h2 class="text-2xl font-black text-white uppercase italic">Garage Roulette</h2>
+                    <button onclick="APP.randomizeGlobal()" class="w-full bg-red-600 text-white font-bold py-4 rounded-xl uppercase shadow-lg gap-2 flex items-center justify-center">${Icons.Shuffle} Randomize All</button>
+                    <div class="flex gap-4 mt-2">
+                        <button onclick="APP.wipeData()" class="text-[10px] text-zinc-600 hover:text-red-500 flex gap-1">${Icons.Trash} Burn</button>
+                        <button onclick="APP.exportData()" class="text-[10px] text-zinc-600 hover:text-white flex gap-1">${Icons.Save} Backup</button>
                     </div>
-                    
-                    <div class="space-y-3 mt-2">
-                        <h3 class="text-xs font-bold text-zinc-600 uppercase tracking-wider ml-1">Quick Access</h3>
-                        <div class="grid grid-cols-2 gap-3">
-                            <button onclick="window.appActions.switchTab('grind')" class="bg-zinc-900 p-4 rounded-xl border border-zinc-800 text-left hover:border-zinc-700 hover:bg-zinc-800 transition-all group"><span class="block text-zinc-500 mb-2 group-hover:text-red-500">${Icons.Dumbbell}</span><span class="font-bold text-zinc-200 block text-sm uppercase">Grind</span><span class="text-xs text-zinc-600">Strength</span></button>
-                            <button onclick="window.appActions.switchTab('ballistic')" class="bg-zinc-900 p-4 rounded-xl border border-zinc-800 text-left hover:border-zinc-700 hover:bg-zinc-800 transition-all group"><span class="block text-zinc-500 mb-2 group-hover:text-red-500">${Icons.Zap}</span><span class="font-bold text-zinc-200 block text-sm uppercase">Ballistic</span><span class="text-xs text-zinc-600">Cond.</span></button>
-                            <button onclick="window.appActions.switchTab('hybrid')" class="bg-zinc-900 p-4 rounded-xl border border-zinc-800 text-left hover:border-zinc-700 hover:bg-zinc-800 transition-all group"><span class="block text-zinc-500 mb-2 group-hover:text-red-500">${Icons.Activity}</span><span class="font-bold text-zinc-200 block text-sm uppercase">Hybrid</span><span class="text-xs text-zinc-600">Mix</span></button>
-                            <button onclick="window.appActions.switchTab('tonic')" class="bg-zinc-900 p-4 rounded-xl border border-zinc-800 text-left hover:border-blue-700 hover:bg-zinc-800 transition-all group"><span class="block text-zinc-500 mb-2 group-hover:text-blue-500">${Icons.Tonic}</span><span class="font-bold text-zinc-200 block text-sm uppercase">Tonic</span><span class="text-xs text-zinc-600">Reset</span></button>
-                             <button onclick="window.appActions.switchTab('ruck')" class="bg-zinc-900 p-4 rounded-xl border border-zinc-800 text-left hover:border-amber-700 hover:bg-zinc-800 transition-all group"><span class="block text-zinc-500 mb-2 group-hover:text-amber-500">${Icons.Footprints}</span><span class="font-bold text-zinc-200 block text-sm uppercase">Ruck</span><span class="text-xs text-zinc-600">Carry</span></button>
-                            <button onclick="window.appActions.switchTab('rebuild')" class="bg-zinc-900 p-4 rounded-xl border border-zinc-800 text-left hover:border-emerald-700 hover:bg-zinc-800 transition-all group"><span class="block text-zinc-500 mb-2 group-hover:text-emerald-500">${Icons.Leaf}</span><span class="font-bold text-zinc-200 block text-sm uppercase">Rebuild</span><span class="text-xs text-zinc-600">Return</span></button>
-                        </div>
+                    ${last?`<div class="text-xs text-zinc-500 mt-4 border-t border-zinc-800 pt-2 w-full">Last: ${last.name} (${new Date(last.date).toLocaleDateString()})</div>`:''}
+                </div>
+                
+                <!-- ASK THE TRAINER AI MODULE -->
+                <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 flex flex-col shadow-lg">
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="text-red-500 bg-red-900/20 p-2 rounded-lg">${Icons.Sparkles}</div>
+                        <h3 class="text-white font-bold text-sm uppercase tracking-wide">Ask The Trainer</h3>
+                    </div>
+                    <div id="chat-container" class="bg-zinc-950 rounded-xl p-3 h-48 overflow-y-auto mb-3 flex flex-col gap-2 border border-zinc-800/50">
+                        ${state.chatHistory.length === 0 ? '<div class="text-zinc-500 text-xs italic text-center mt-10">Ask about injuries, substitutions, or protocol details...</div>' : state.chatHistory.map(msg => `<div class="chat-bubble ${msg.role === 'user' ? 'chat-user' : 'chat-ai'}">${msg.text}</div>`).join('')}
+                    </div>
+                    <div class="flex gap-2">
+                        <input type="text" id="chat-input" class="flex-1 bg-zinc-800 border border-zinc-700 rounded-lg px-3 text-sm text-white focus:outline-none focus:border-red-500 transition-colors" placeholder="e.g. 'Back hurts, sub for DL?'">
+                        <button onclick="APP.sendMessage()" class="bg-red-600 text-white p-2 rounded-lg hover:bg-red-500 transition-colors">${Icons.Send}</button>
                     </div>
                 </div>
-            `;
+
+                <div class="text-[10px] text-zinc-700 font-mono text-center">Build: ${APP_BUILD_DATE}<br>Philosophy: Dan John</div>
+            </div>`;
+        }
+
+        function renderHistory() {
+            if(!state.history.length) return `<div class="p-10 text-center text-zinc-500">No workouts completed yet.</div>`;
+            return `<div class="p-4 space-y-2">${state.history.slice().reverse().map(h=>`<div class="bg-zinc-900 border border-zinc-800 p-3 rounded-lg flex justify-between items-center"><span class="text-white font-bold text-sm">${h.name}</span><span class="text-xs text-zinc-500">${new Date(h.date).toLocaleDateString()}</span></div>`).join('')}</div>`;
         }
 
         function renderActiveWorkout() {
             const w = state.activeWorkout;
-            const progress = calculateProgress();
-            
-            let category = getWorkoutCategory(w.id);
-            let themeColor = 'bg-red-900/30 text-red-500 border-red-900/50';
-            let checkColor = 'checkbox-wrapper';
-            
-            if (category === 'Rebuild') { themeColor = 'bg-emerald-900/30 text-emerald-500 border-emerald-900/50'; checkColor = 'checkbox-wrapper-rebuild'; }
-            else if (category === 'Tonic') { themeColor = 'bg-blue-900/30 text-blue-500 border-blue-900/50'; checkColor = 'checkbox-wrapper-tonic'; }
-            else if (category === 'Ruck') { themeColor = 'bg-amber-900/30 text-amber-500 border-amber-900/50'; checkColor = 'checkbox-wrapper-ruck'; }
-            
-            let html = `
-                <div class="min-h-full pb-20">
-                    <div class="px-6 pt-8 pb-6 bg-zinc-900 border-b border-zinc-800">
-                        <div class="flex justify-between items-start mb-3">
-                            <div class="inline-block px-2 py-1 rounded ${themeColor} text-xs font-bold uppercase tracking-wider border">${category}</div>
-                            ${w.difficulty ? `<div class="bg-zinc-800 px-2 py-1 rounded border border-zinc-700 text-xs text-zinc-300 capitalize flex items-center gap-1">${getDifficultyIcon(w.difficulty)} ${w.difficulty}</div>` : ''}
-                        </div>
-                        <h2 class="text-3xl font-black text-white mb-2 leading-none">${w.title}</h2>
-                        <p class="text-zinc-400 text-sm">${w.desc}</p>
-                    </div>
+            let theme = 'bg-red-900/30 text-red-500 border-red-900/50';
+            let check = 'checkbox-wrapper';
+            if (w.id.includes('rebuild')) { theme = 'bg-emerald-900/30 text-emerald-500 border-emerald-900/50'; check = 'checkbox-wrapper-rebuild'; }
+            else if (state.currentTab === 'tonic') { theme = 'bg-blue-900/30 text-blue-500 border-blue-900/50'; check = 'checkbox-wrapper-tonic'; }
+            else if (state.currentTab === 'ruck') { theme = 'bg-amber-900/30 text-amber-500 border-amber-900/50'; check = 'checkbox-wrapper-ruck'; }
 
-                    <div class="p-6 space-y-6">
-                        ${w.equipment ? `<div class="bg-zinc-900/50 rounded-lg p-4 border border-zinc-800"><h4 class="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2">Gear Required</h4><p class="text-zinc-300 text-sm font-medium">${w.equipment}</p></div>` : ''}
-                        
-                        ${w.table ? `
-                        <div class="bg-zinc-900/50 rounded-lg p-4 border border-zinc-800 overflow-x-auto">
-                            <h4 class="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2">Pace Targets</h4>
-                            <table class="w-full text-left text-sm text-zinc-300">
-                                <thead><tr class="border-b border-zinc-700"><th class="py-2">Load</th><th class="py-2">Beginner</th><th class="py-2">Moderate</th><th class="py-2">Advanced</th></tr></thead>
-                                <tbody>${w.table.map(row => `<tr class="border-b border-zinc-800 last:border-0"><td class="py-2 font-bold text-white">${row.load}</td><td class="py-2 text-emerald-500">${row.beginner}</td><td class="py-2 text-yellow-500">${row.moderate}</td><td class="py-2 text-red-500">${row.advanced}</td></tr>`).join('')}</tbody>
-                            </table>
-                        </div>` : ''}
-
-                        <div class="bg-zinc-900/50 rounded-lg p-4 border border-zinc-800">
-                            <h4 class="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2">The Work</h4>
-                            ${w.protocol ? `<p class="text-zinc-300 text-sm mb-3 italic">"${w.protocol}"</p>` : ''}
-                            <ul class="space-y-2">
-                                ${w.movements.map(m => `<li class="flex items-start gap-3 text-zinc-300 text-sm"><span class="w-1.5 h-1.5 rounded-full ${category === 'Rebuild' ? 'bg-emerald-500' : (category === 'Tonic' ? 'bg-blue-500' : (category === 'Ruck' ? 'bg-amber-500' : 'bg-red-600'))} mt-2 shrink-0"></span><span class="leading-relaxed">${m}</span></li>`).join('')}
-                            </ul>
-                        </div>
-
-                        <div>
-                             <div class="flex justify-between items-end mb-4"><h4 class="text-sm font-bold text-white uppercase tracking-wider">Round Tracker</h4><span class="text-xs text-zinc-500 font-mono">${progress}% Complete</span></div>
-                            <div class="grid grid-cols-5 gap-2">
-                                ${Array.from({length: w.rounds}).map((_, i) => `<label class="${checkColor} cursor-pointer relative"><input type="checkbox" class="opacity-0 absolute w-full h-full z-10" ${state.checklist[i] ? 'checked' : ''} onchange="window.appActions.toggleRound(${i})"><div class="h-12 rounded bg-zinc-800 border-2 border-zinc-700 flex items-center justify-center transition-all duration-200"><span class="text-sm font-bold text-zinc-500 ${state.checklist[i] ? 'hidden' : 'block'}">${i + 1}</span>${Icons.Check}</div></label>`).join('')}
-                                <button onclick="window.appActions.addRound()" class="h-12 rounded bg-zinc-900 border border-dashed border-zinc-700 flex items-center justify-center text-zinc-500 hover:text-white hover:border-zinc-500 active:scale-95 transition-all"><span class="text-xl font-bold">+</span></button>
-                            </div>
-                        </div>
-                        
-                        <div class="pt-8">
-                             <button id="btn-complete" class="w-full py-4 bg-zinc-100 text-zinc-900 font-bold uppercase rounded-xl active:scale-[0.98] transition-transform">Finish Session</button>
-                        </div>
-                    </div>
-                </div>`;
-            return html;
+            return `<div class="min-h-full pb-24"><div class="px-6 pt-8 pb-6 bg-zinc-900 border-b border-zinc-800"><div class="inline-block px-2 py-1 rounded ${theme} text-xs font-bold uppercase tracking-wider border mb-3">Active Session</div><h2 class="text-3xl font-black text-white mb-2 leading-none">${w.title}</h2><p class="text-zinc-400 text-sm">${w.desc}</p></div><div class="p-6 space-y-6"><div class="bg-zinc-900/50 rounded-lg p-4 border border-zinc-800"><h4 class="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2">Protocol</h4><ul class="space-y-2">${w.movements.map(m=>`<li class="flex gap-3 text-zinc-300 text-sm"><span class="w-1.5 h-1.5 rounded-full bg-zinc-600 mt-2 shrink-0"></span>${m}</li>`).join('')}</ul></div><div><div class="grid grid-cols-5 gap-2">${Array.from({length:w.rounds}).map((_,i)=>`<label class="${check} cursor-pointer relative"><input type="checkbox" class="opacity-0 absolute w-full h-full z-10" ${state.checklist[i]?'checked':''} onchange="APP.toggleRound(${i})"><div class="h-12 rounded bg-zinc-800 border-2 border-zinc-700 flex items-center justify-center transition-all"><span class="text-sm font-bold text-zinc-500 ${state.checklist[i]?'hidden':'block'}">${i+1}</span>${Icons.Check}</div></label>`).join('')}<button onclick="APP.addRound()" class="h-12 rounded bg-zinc-900 border border-dashed border-zinc-700 flex items-center justify-center text-zinc-500"><span class="text-xl font-bold">+</span></button></div></div><div class="pt-8"><button onclick="APP.completeWorkout()" class="w-full py-4 bg-zinc-100 text-zinc-900 font-bold uppercase rounded-xl">Finish Session</button></div></div></div>`;
         }
 
-        function calculateProgress() {
-            if (!state.activeWorkout || !state.activeWorkout.rounds) return 0;
-            const total = state.activeWorkout.rounds;
-            const completed = Object.values(state.checklist).filter(Boolean).length;
-            return Math.round((completed / total) * 100);
-        }
-
-        function attachGlobalListeners() {
-            // Re-attach listeners using IDs for buttons created in render
-            const btnExit = document.getElementById('btn-exit');
-            if(btnExit) btnExit.onclick = () => window.appActions.exitWorkout();
-            
-            const btnWarmup = document.getElementById('btn-warmup');
-            if(btnWarmup) btnWarmup.onclick = () => window.appActions.toggleWarmup();
-
-            const btnInfo = document.getElementById('btn-info');
-            if(btnInfo) btnInfo.onclick = () => window.appActions.showInventory();
-
-            const btnCloseWarmup = document.getElementById('btn-close-warmup');
-            if(btnCloseWarmup) btnCloseWarmup.onclick = () => window.appActions.toggleWarmup();
-
-            const btnReady = document.getElementById('btn-ready');
-            if(btnReady) btnReady.onclick = () => window.appActions.toggleWarmup();
-
-            const btnRandomTab = document.getElementById('btn-random-tab');
-            if(btnRandomTab) btnRandomTab.onclick = () => window.appActions.randomizeInTab(state.currentTab);
-
-            const btnRandomGlobal = document.getElementById('btn-random-global');
-            if(btnRandomGlobal) btnRandomGlobal.onclick = () => window.appActions.randomizeGlobal();
-            
-            const btnComplete = document.getElementById('btn-complete');
-            if(btnComplete) btnComplete.onclick = () => window.appActions.completeWorkout();
-
-            // Tabs delegation
-            document.querySelectorAll('[data-tab]').forEach(btn => {
-                btn.onclick = (e) => window.appActions.switchTab(e.currentTarget.dataset.tab);
-            });
-        }
-
-        // --- 5. EXPOSED ACTIONS ---
-        
-        window.appActions = {
-            switchTab: (tab) => { state.currentTab = tab; saveState(); render(); },
+        // --- 5. LOGIC & API ---
+        window.APP = {
+            switchTab: (t) => { state.currentTab = t; saveState(); render(); },
             toggleWarmup: () => { state.warmupActive = !state.warmupActive; render(); },
-            exitWorkout: () => { state.activeWorkout = null; state.checklist = {}; saveState(); render(); },
-            completeWorkout: () => { if(confirm('Finish workout?')) window.appActions.exitWorkout(); },
-            toggleRound: (idx) => { state.checklist[idx] = !state.checklist[idx]; saveState(); render(); },
-            addRound: () => { if(state.activeWorkout) { state.activeWorkout.rounds += 1; saveState(); render(); } },
+            exitWorkout: () => { clearInterval(timerInterval); state.activeWorkout = null; state.checklist = {}; state.timer = 0; state.timerRunning = false; saveState(); render(); },
+            completeWorkout: () => { 
+                if(confirm('Finish workout?')) { 
+                    state.history.push({ name: state.activeWorkout.title, date: new Date().toISOString() });
+                    APP.exitWorkout(); 
+                } 
+            },
+            toggleRound: (i) => { state.checklist[i] = !state.checklist[i]; saveState(); render(); },
+            addRound: () => { if(state.activeWorkout) { state.activeWorkout.rounds++; saveState(); render(); } },
+            toggleTimer: () => {
+                state.timerRunning = !state.timerRunning;
+                if(state.timerRunning) { timerInterval = setInterval(() => { state.timer++; renderFloatingTimerUI(); }, 1000); }
+                else { clearInterval(timerInterval); renderFloatingTimerUI(); }
+                render(); 
+            },
             setRebuildWeek: (wk) => { state.activeRebuildWeek = wk; saveState(); render(); },
             clearRebuildWeek: () => { state.activeRebuildWeek = null; saveState(); render(); },
             startRebuildSession: (wk) => {
-                const weekData = REBUILD_PATHWAY.weeks.find(w => w.week === wk);
-                state.activeWorkout = { 
-                    id: `rebuild-week-${wk}`, 
-                    title: weekData.title, 
-                    desc: weekData.context, 
-                    protocol: 'Complete all movements in order.', 
-                    equipment: 'Bodyweight / Light KB', 
-                    movements: weekData.movements, 
-                    rounds: 1, 
-                    difficulty: 'beginner' 
-                };
-                state.checklist = {};
-                saveState();
-                render();
+                const w = REBUILD_PATHWAY.weeks.find(x=>x.week===wk);
+                state.activeWorkout = { id: `rebuild-${wk}`, title: w.title, desc: w.context, equipment: 'Bodyweight/Light', difficulty: 'beginner', movements: w.movements, rounds: 1 };
+                state.checklist = {}; saveState(); render();
             },
             selectWorkout: (id) => {
-                let workout = null;
-                for (const list of Object.values(WORKOUTS)) {
-                    const found = list.find(w => w.id === id);
-                    if (found) { workout = found; break; }
+                let w = null;
+                for(const k in WORKOUTS) { w = WORKOUTS[k].find(x=>x.id===id); if(w) break; }
+                if(w) { state.activeWorkout = w; state.checklist = {}; state.warmupActive = false; saveState(); render(); }
+            },
+            randomizeInTab: (tab) => { const list = WORKOUTS[tab]; if(list) APP.selectWorkout(list[Math.floor(Math.random()*list.length)].id); },
+            randomizeGlobal: () => { const all = [WORKOUTS.grind, WORKOUTS.ballistic, WORKOUTS.hybrid].flat(); APP.selectWorkout(all[Math.floor(Math.random()*all.length)].id); },
+            showInventory: () => alert(`KBs: ${INVENTORY.kbs.pairs.join(', ')} (Pairs)\nBarbell, ${INVENTORY.machines.join(', ')}`),
+            wipeData: () => { if(confirm('Permanently delete all data?')) { localStorage.removeItem(STORAGE_KEY); location.reload(); } },
+            exportData: () => { navigator.clipboard.writeText(JSON.stringify(state)).then(()=>alert('Data copied to clipboard')); },
+            
+            // --- AI Logic ---
+            sendMessage: async () => {
+                const input = document.getElementById('chat-input');
+                const text = input.value.trim();
+                if(!text) return;
+                
+                // Add user message
+                state.chatHistory.push({role: 'user', text: text});
+                render(); // Re-render to show user msg
+                input.value = '';
+
+                // Prepare Loading
+                const loadingMsg = {role: 'ai', text: 'Thinking...'};
+                state.chatHistory.push(loadingMsg);
+                render();
+
+                try {
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{
+                                parts: [{
+                                    text: `You are an expert strength coach following the philosophy of Dan John (Easy Strength, Armor Building). 
+                                           User Inventory: ${JSON.stringify(INVENTORY)}. 
+                                           User Query: ${text}. 
+                                           Keep answer short (under 50 words), actionable, and "tough love" style.`
+                                }]
+                            }]
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    const reply = data.candidates[0].content.parts[0].text;
+                    
+                    // Replace loading with actual reply
+                    state.chatHistory.pop(); 
+                    state.chatHistory.push({role: 'ai', text: reply});
+                    saveState();
+                    render();
+                } catch (e) {
+                    state.chatHistory.pop();
+                    state.chatHistory.push({role: 'ai', text: "Offline mode. Check connection."});
+                    render();
                 }
-                if (workout) { state.activeWorkout = workout; state.checklist = {}; state.warmupActive = false; saveState(); render(); }
-            },
-            randomizeInTab: (tab) => {
-                const list = WORKOUTS[tab];
-                if(list) { const random = list[Math.floor(Math.random() * list.length)]; window.appActions.selectWorkout(random.id); }
-            },
-            randomizeGlobal: () => {
-                const allowedLists = [WORKOUTS.grind, WORKOUTS.ballistic, WORKOUTS.hybrid];
-                const allWorkouts = allowedLists.flat();
-                const random = allWorkouts[Math.floor(Math.random() * allWorkouts.length)];
-                window.appActions.selectWorkout(random.id);
-            },
-            showInventory: () => { alert(`INVENTORY:\n• KBs (Pairs): ${INVENTORY.kbs.pairs.join('kg, ')}kg\n• KBs (Singles): ${INVENTORY.kbs.singles.join('kg, ')}kg\n• Barbell\n• ${INVENTORY.machines.join('\n• ')}`); },
-            wipeData: () => { if(confirm('⚠️ SECURITY WARNING ⚠️\n\nThis will permanently delete all workout history and preferences from this device.\n\nAre you sure?')) { localStorage.removeItem(STORAGE_KEY); location.reload(); } },
-            exportData: () => {
-                const data = localStorage.getItem(STORAGE_KEY);
-                if (!data) return alert("No data to export.");
-                navigator.clipboard.writeText(data).then(() => alert("Encrypted State Copied to Clipboard."));
             }
         };
 
-        // Init
-        render();
+        // Internal helper to avoid full re-render on timer tick
+        function renderFloatingTimerUI() {
+            const btn = document.querySelector('.floating-timer');
+            if(btn) {
+                const mins = Math.floor(state.timer/60).toString().padStart(2,'0');
+                const secs = (state.timer%60).toString().padStart(2,'0');
+                btn.innerHTML = `<span class="${state.timerRunning?'text-red-500 animate-pulse':'text-zinc-400'}">${Icons.Timer}</span><span class="font-mono text-lg font-bold">${mins}:${secs}</span>`;
+            }
+        }
 
+        // Public API for Power Users
+        window.IronGarageAPI = {
+            getHistory: () => state.history,
+            exportState: () => JSON.stringify(state),
+            importState: (json) => { try { state = JSON.parse(json); saveState(); render(); console.log('State imported'); } catch(e){ console.error('Invalid JSON'); } },
+            getWorkouts: () => WORKOUTS
+        };
+
+        render();
     })();
     </script>
 </body>
