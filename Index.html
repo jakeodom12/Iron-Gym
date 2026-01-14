@@ -28,6 +28,7 @@
                             red: '#dc2626', // Red-600
                             dark: '#09090b',
                             surface: '#27272a', // Zinc-800
+                            emerald: '#10b981',
                         }
                     },
                     fontFamily: {
@@ -64,6 +65,10 @@
             border-bottom: 2px solid #dc2626;
             color: #f4f4f5; /* Zinc-100 */
         }
+        .tab-active-rebuild {
+            border-bottom: 2px solid #10b981; /* Emerald-500 */
+            color: #f4f4f5;
+        }
         .tab-inactive {
             border-bottom: 2px solid transparent;
             color: #71717a; /* Zinc-500 */
@@ -75,6 +80,15 @@
             border-color: #dc2626;
         }
         .checkbox-wrapper input:checked + div svg {
+            display: block;
+        }
+        
+        /* Rebuild specific checkbox */
+        .checkbox-wrapper-rebuild input:checked + div {
+            background-color: #10b981;
+            border-color: #10b981;
+        }
+        .checkbox-wrapper-rebuild input:checked + div svg {
             display: block;
         }
     </style>
@@ -96,9 +110,18 @@
                 singles: [28, 44]    // kg
             },
             barbell: true,
-            machines: ['Assault Runner', 'Reverse Hyper', 'Pull-up Bar']
+            machines: ['Assault Runner', 'Reverse Hyper', 'Pull-up Bar', 'Sled']
         };
 
+        const WARMUP_ROUTINE = [
+            { title: "1. Meditation", desc: "1-Minute One-Moment Meditation. Count breaths." },
+            { title: "2. Mobility", desc: "30s Bar Hang + 30s Goblet Squat Hold." },
+            { title: "3. Review", desc: "Check Journal & Compass." },
+            { title: "4. Compass Points", desc: "Check: Work, Rest, Play, Pray." },
+            { title: "5. Warm-up Sets", desc: "1 Set each: OH Press, Row, Hinge, OH Squat, Carry." }
+        ];
+
+        // Standard Workouts (Randomizable)
         const WORKOUTS = {
             grind: [
                 {
@@ -106,44 +129,89 @@
                     title: 'Easy Strength Classic',
                     desc: 'The fundamental 40-day protocol. Never miss a rep, never fail, leave fresh.',
                     equipment: 'Barbell, Pull-up Bar',
+                    difficulty: 'beginner',
                     protocol: '2x5 per movement. Warm up, do the work, put weights away.',
-                    movements: [
-                        'Whole Body (Deadlift or Swing)',
-                        'Push (Press or Bench)',
-                        'Pull (Pull-up or Row)',
-                        'Hinge/Squat (Supple movement)',
-                        'Loaded Carry (Farmer Walk)'
-                    ],
-                    rounds: 1 // It's just one giant checklist
+                    movements: ['Whole Body (DL/Swing)', 'Push (Press/Bench)', 'Pull (Pull-up/Row)', 'Hinge/Squat', 'Loaded Carry'],
+                    rounds: 1
+                },
+                {
+                    id: 'reg-park-5x5',
+                    title: 'Reg Park 5x5',
+                    desc: 'The grandfather of all strength programs.',
+                    equipment: 'Barbell',
+                    difficulty: 'beginner',
+                    protocol: '2 warm-up sets, 3 working sets of 5 reps.',
+                    movements: ['Squat 5x5', 'Chin-ups 5x5', 'Dip or Press 5x5', 'Deadlift 5x5', 'Barbell Curl 3x10'],
+                    rounds: 1
+                },
+                {
+                    id: 'abf-press-day',
+                    title: 'ABF: Press Day',
+                    desc: 'The Yin to the ABC Yang. Heavy volume pressing.',
+                    equipment: 'Double KBs or Barbell',
+                    difficulty: 'intermediate',
+                    protocol: 'Focus on Military Press. Varies by week.',
+                    movements: ['Double Mil Press (Ladders 2-3-5)', 'Pull-ups (match sets)', 'Goblet Squats (light)'],
+                    rounds: 5
+                },
+                 {
+                    id: 'abf-break-in',
+                    title: 'ABF: Hypertrophy Break-In',
+                    desc: 'Barbell mass building phase.',
+                    equipment: 'Barbell',
+                    difficulty: 'beginner',
+                    protocol: 'Classic sets and reps. Focus on technique and squeeze.',
+                    movements: ['Clean & Press 5x8', 'Barbell Curl 3-5x8', 'Squat 3x10'],
+                    rounds: 1
+                },
+                {
+                    id: 'southwood',
+                    title: 'Southwood Program',
+                    desc: 'Classic 4 days/week strength builder.',
+                    equipment: 'Barbell',
+                    difficulty: 'intermediate',
+                    protocol: '8-6-4 Reps on all lifts. Add weight when all reps completed.',
+                    movements: ['Power Clean (8-6-4)', 'Mil Press (8-6-4)', 'Front Squat (8-6-4)', 'Bench Press (8-6-4)'],
+                    rounds: 1
+                },
+                {
+                    id: 'rop-heavy',
+                    title: 'Rite of Passage (Heavy)',
+                    desc: 'The classic ladder press program.',
+                    equipment: 'Single KB',
+                    difficulty: 'advanced',
+                    protocol: 'Clean & Press Ladders (1-2-3-4-5). Finish with Swings.',
+                    movements: ['C&P Ladders (Heavy)', 'Weighted Pull-ups', 'Finisher: Dice Roll Swings/Snatch'],
+                    rounds: 5
+                },
+                {
+                    id: 'paschall-classic',
+                    title: 'The Paschall One-Set',
+                    desc: 'Old school bodybuilding. One heavy set of 16-20.',
+                    equipment: 'Barbell',
+                    difficulty: 'intermediate',
+                    protocol: '1 Set x 16-20 Reps per movement.',
+                    movements: ['OH Squat', 'Curl', 'DL + Shrug', 'Incline Press', 'Triceps', 'Back Squat', 'Upright Row'],
+                    rounds: 1
                 },
                 {
                     id: 'breathing-squat',
                     title: 'Breathing Squat Complex',
-                    desc: 'Old school systemic hypertrophy. Use moderate weight.',
+                    desc: 'Systemic hypertrophy. Moderate weight.',
                     equipment: 'Barbell',
-                    protocol: '3 Rounds. Focus on deep breathing.',
-                    movements: [
-                        '15-20 Breathing Squats',
-                        '15-20 Pullovers',
-                        'Bench Press (interspersed)',
-                        'Curls (interspersed)'
-                    ],
+                    difficulty: 'intermediate',
+                    protocol: '3 Sets. Squats supersetted with Pullovers.',
+                    movements: ['15-20 Breathing Squats', '15-20 Pullovers', 'Bench Press (interspersed)', 'Curls (interspersed)'],
                     rounds: 3
                 },
                 {
                     id: 'complex-a',
                     title: 'Barbell Complex A',
-                    desc: '"Wrestler Strength" for collision athletes.',
+                    desc: '"Wrestler Strength". High capacity.',
                     equipment: 'Barbell',
-                    protocol: '8 reps each movement. Do not put the bar down.',
-                    movements: [
-                        'Row',
-                        'Clean',
-                        'Front Squat',
-                        'Military Press',
-                        'Back Squat',
-                        'Good Mornings'
-                    ],
+                    difficulty: 'advanced',
+                    protocol: '8 reps each movement. Bar does not touch ground.',
+                    movements: ['Row', 'Clean', 'Front Squat', 'Mil Press', 'Back Squat', 'Good Mornings'],
                     rounds: 5
                 }
             ],
@@ -151,42 +219,71 @@
                 {
                     id: 'humane-burpee',
                     title: 'Humane Burpee',
-                    desc: 'Dan John classic. Volume descends, heart rate ascends.',
-                    equipment: 'Kettlebell (Single 24kg or 32kg)',
-                    protocol: '15 Swings, then Goblet Squats/Pushups ladder (5-4-3-2-1).',
-                    movements: [
-                        '15 Swings',
-                        'Goblet Squats (Descending 5->1)',
-                        'Pushups (Descending 5->1)'
-                    ],
+                    desc: 'Volume descends, heart rate ascends.',
+                    equipment: 'Kettlebell',
+                    difficulty: 'intermediate',
+                    protocol: '15 Swings, then Goblet Squats/Pushups ladder (5->1).',
+                    movements: ['15 Swings', 'Goblet Squats (5->1)', 'Pushups (5->1)'],
                     rounds: 5
+                },
+                {
+                    id: 'eagle',
+                    title: 'The Eagle',
+                    desc: 'A Dan John classic. "So simple, so hard."',
+                    equipment: 'Double KBs',
+                    difficulty: 'advanced',
+                    protocol: '8 Double Front Squats, 20m Farmer Carry. 8 Rounds.',
+                    movements: ['8 Double Front Squats', '20m Farmer Carry', 'Do NOT put bells down.'],
+                    rounds: 8
+                },
+                {
+                    id: 'slurpees',
+                    title: 'Slurpees / Bearpees',
+                    desc: 'Metabolic density. Choose your poison.',
+                    equipment: 'Kettlebell',
+                    difficulty: 'intermediate',
+                    protocol: '15 Swings, Goblet Squat Ladder (5->1).',
+                    movements: ['15 Swings', 'Goblet Squats (5->1)', 'Var: 10 Mtn Climbers OR Bear Crawl'],
+                    rounds: 5
+                },
+                {
+                    id: 'snatch-test',
+                    title: 'The Snatch Test',
+                    desc: 'The standard. 100 Reps in 5 mins.',
+                    equipment: '24kg KB',
+                    difficulty: 'advanced',
+                    protocol: 'Goal: < 5 Minutes. Manage your fatigue.',
+                    movements: ['20L / 20R', '15L / 15R', '10L / 10R', '5L / 5R'],
+                    rounds: 1
+                },
+                {
+                    id: 'ssst',
+                    title: 'Secret Service Snatch Test',
+                    desc: 'Elite work capacity test.',
+                    equipment: '24kg KB',
+                    difficulty: 'advanced',
+                    protocol: '10 Minutes MAX Reps. Switch hands as needed.',
+                    movements: ['Max Snatch Reps in 10:00', 'Std: >200 (Excellent)', 'Elite: >250'],
+                    rounds: 1
                 },
                 {
                     id: 'cardio-clean',
                     title: 'Cardio Clean Complex',
-                    desc: 'A grip-intensive gasser.',
-                    equipment: 'Kettlebell (Single)',
+                    desc: 'Grip-intensive gasser.',
+                    equipment: 'Single KB',
+                    difficulty: 'intermediate',
                     protocol: 'L/R Ladder: 8/3, 5/2, 3/1 (Cleans/Squats).',
-                    movements: [
-                        'Left: 8 Cleans, 3 Squats',
-                        'Right: 8 Cleans, 3 Squats',
-                        'Left: 5 Cleans, 2 Squats',
-                        'Right: 5 Cleans, 2 Squats',
-                        'Left: 3 Cleans, 1 Squat',
-                        'Right: 3 Cleans, 1 Squat'
-                    ],
+                    movements: ['L: 8 Clean/3 Squat', 'R: 8 Clean/3 Squat', 'L: 5 Clean/2 Squat', 'R: 5 Clean/2 Squat', 'L: 3 Clean/1 Squat', 'R: 3 Clean/1 Squat'],
                     rounds: 1
                 },
-                {
+                 {
                     id: 'lift-n-sprint',
                     title: 'Lift-n-Sprints',
                     desc: 'Gear change drill. Hinge to explosive speed.',
-                    equipment: 'Barbell or KB, Assault Runner',
+                    equipment: 'Barbell or KB, Runner',
+                    difficulty: 'intermediate',
                     protocol: '8-10 reps hinge/squat, immediately into sprint.',
-                    movements: [
-                        '10 Heavy Swings or Cleans',
-                        '100m Sprint (Assault Runner)'
-                    ],
+                    movements: ['10 Heavy Swings or Cleans', '100m Sprint (Assault Runner)'],
                     rounds: 5
                 }
             ],
@@ -195,63 +292,129 @@
                     id: 'abc-double',
                     title: 'Armor Building Complex',
                     desc: 'The Gold Standard. Double KB work.',
-                    equipment: 'Double KBs (Rec: 2x24kg)',
-                    protocol: '2 Cleans, 1 Press, 3 Front Squats. EMOM or until failure.',
-                    movements: [
-                        '2 Double Cleans',
-                        '1 Double Press',
-                        '3 Front Squats'
-                    ],
-                    rounds: 20 // Default target for a session
+                    equipment: 'Double KBs',
+                    difficulty: 'intermediate',
+                    protocol: '2 Cleans, 1 Press, 3 Front Squats. Goal: 30 Rnds in 30min.',
+                    movements: ['2 Double Cleans', '1 Double Press', '3 Front Squats'],
+                    rounds: 30
+                },
+                {
+                    id: 'abc-barbell',
+                    title: 'Barbell Armor Building',
+                    desc: 'The barbell adaptation.',
+                    equipment: 'Barbell',
+                    difficulty: 'intermediate',
+                    protocol: '2 Cleans, 1 Press, 3 Front Squats. Do not put bar down.',
+                    movements: ['2 Power Cleans', '1 Overhead Press', '3 Front Squats', 'Rest 1-2 min'],
+                    rounds: 5
+                },
+                 {
+                    id: 'complex-c',
+                    title: 'Barbell Complex C',
+                    desc: 'Explosive pulling and stability.',
+                    equipment: 'Barbell',
+                    difficulty: 'advanced',
+                    protocol: '5-8 Reps per movement. Continuous.',
+                    movements: ['Hang Snatch', 'Overhead Squat', 'Back Squat', 'Good Morning', 'Row', 'Deadlift'],
+                    rounds: 3
                 },
                 {
                     id: 'abc-single',
                     title: 'Single KB ABC',
-                    desc: 'Asymmetry focus. 4-4-4 total count.',
-                    equipment: 'Single KB (32kg or 28kg)',
-                    protocol: '1 Clean & Press (L), 1 Clean & Press (R), 2 Squats.',
-                    movements: [
-                        'Left: 1 Clean & Press',
-                        'Right: 1 Clean & Press',
-                        '2 Goblet/Front Squats'
-                    ],
-                    rounds: 15
+                    desc: 'Asymmetry focus. Corrects imbalances.',
+                    equipment: 'Single KB',
+                    difficulty: 'beginner',
+                    protocol: 'One "Round" is the full L+R sequence below.',
+                    movements: ['(L) 1 Clean & Press', '(R) 1 Clean & Press', '2 Goblet Squats', '-- Park Bell --', '(R) 1 Clean & Press', '(L) 1 Clean & Press', '2 Goblet Squats'],
+                    rounds: 10
                 },
                 {
-                    id: 'running-back',
+                    id: 'rbc',
                     title: 'Running Back Complex',
-                    desc: 'Descending ladder without putting bells down.',
+                    desc: 'Descending ladder, bells never touch ground.',
                     equipment: 'Double KBs',
+                    difficulty: 'advanced',
                     protocol: 'Ladder 5->1 reps of Cleans & Front Squats.',
-                    movements: [
-                        'Double Cleans (5,4,3,2,1)',
-                        'Front Squats (5,4,3,2,1)'
-                    ],
+                    movements: ['Double Cleans (5,4,3,2,1)', 'Front Squats (5,4,3,2,1)'],
+                    rounds: 5
+                },
+                {
+                    id: 'sparhawk',
+                    title: 'The Sparhawk',
+                    desc: 'Goblet Squat ladder with carries.',
+                    equipment: 'Single KB (32kg)',
+                    difficulty: 'intermediate',
+                    protocol: 'Squat 8->1. Suitcase carry between every set.',
+                    movements: ['Goblet Squats (8..1)', 'Suitcase Carry L (20m)', 'Suitcase Carry R (20m)'],
+                    rounds: 8
+                },
+                {
+                    id: 'cook-drill',
+                    title: 'The Cook Drill',
+                    desc: 'Integrity under load.',
+                    equipment: 'Single KB',
+                    difficulty: 'beginner',
+                    protocol: 'Walk until form breaks, then switch positions.',
+                    movements: ['Waiter Walk', 'Rack Walk', 'Suitcase Walk', 'Var: "CookED" add 10 swings between'],
                     rounds: 3
                 },
                 {
-                    id: 'the-perfect',
-                    title: 'The Perfect Workout',
-                    desc: 'Mobility, Grind, and Ballistics.',
-                    equipment: 'Pull-up Bar, KB',
-                    protocol: 'Round 1: Mobility/Press. Round 2: Squats/Swings/Carries.',
-                    movements: [
-                        'Part A: 1/2 Kneel Press & Hangs',
-                        'Part B: 5x15 Swings, Goblet Squats, Carries'
-                    ],
+                    id: 'bear-bear',
+                    title: 'Bear / Bear',
+                    desc: 'Simple, brutal conditioning.',
+                    equipment: 'Heavy Bag or Partner',
+                    difficulty: 'intermediate',
+                    protocol: 'Crawl for distance, Carry for distance.',
+                    movements: ['Bear Crawl (20-40m)', 'Bear Hug Carry (40-60m)'],
+                    rounds: 5
+                },
+                {
+                    id: 'carry-everything',
+                    title: 'Loaded Carry "Everything"',
+                    desc: 'The festival of carries.',
+                    equipment: 'Sled, KBs, Pack',
+                    difficulty: 'advanced',
+                    protocol: 'Progressive loading carriage.',
+                    movements: ['Suitcase', 'Farmer', 'Suitcase + Pack', 'Farmer + Pack', 'Sled Drag', 'Sled + Bearhug', 'Sled + Pack + Farmer'],
                     rounds: 1
                 }
             ]
         };
 
+        // Rebuild Pathway: 12-Week Protocol
+        const REBUILD_PATHWAY = {
+            overview: "A 12-week graduated return-to-play protocol. Starts with nervous system regulation and ends with full conditioning. Do not skip steps.",
+            weeks: [
+                // PHASE 1: THE RESET
+                { week: 1, title: 'Week 1: The Breath', context: 'Goal: Regulate the nervous system. No heavy loading.', movements: ['1-Min Meditation', 'OS: Neck Nods (1 min)', 'OS: Rocking (1 min)', 'Walk: 15 min Brisk Amble'] },
+                { week: 2, title: 'Week 2: Awakening', context: 'Goal: Reintroduce range of motion.', movements: ['1-Min Meditation', 'OS: Rocking + Nods', 'Hang: 30 sec (supported if needed)', 'Squat Hold: 30 sec (bottom pos)', 'Walk: 20 min'] },
+                { week: 3, title: 'Week 3: Patterning', context: 'Goal: Light load to test patterns.', movements: ['Daily Mobility Two (Hang/Squat)', 'Goblet Squat: 1 set of 5 (Light)', 'Suitcase Carry: 20m Left, 20m Right', 'Walk: 20 min'] },
+                { week: 4, title: 'Week 4: The Checkpoint', context: 'Goal: Integrity. If this feels easy, move to Phase 2.', movements: ['Daily Mobility Two', 'Goblet Squat: 2 sets of 5', 'Suitcase Carry: 40m per hand', 'OS: Egg Rolls', 'Walk: 30 min'] },
+                
+                // PHASE 2: BUILDING BACK (Rule of 10)
+                { week: 5, title: 'Week 5: Tension', context: 'Goal: Rebuild structure. 3x3 rule.', movements: ['Half-Kneeling Press: 3 sets of 3', 'Assisted Pull-up/Hang: 3 sets of 3', 'Hip Thrust: 3 sets of 10', 'Suitcase Carry: Heavy'] },
+                { week: 6, title: 'Week 6: Stability', context: 'Goal: Maintain tension under fatigue.', movements: ['Half-Kneeling Press: 3 sets of 3', 'Assisted Pull-up: 3 sets of 3', 'KB Swing: 3 sets of 10', 'Suitcase Carry: Heavy'] },
+                { week: 7, title: 'Week 7: Volume', context: 'Goal: Shift to 2x5. More time under tension.', movements: ['Half-Kneeling Press: 2 sets of 5', 'Pull-up/Row: 2 sets of 5', 'KB Swing: 2 sets of 15', 'Farmer Carry (Two Hands)'] },
+                { week: 8, title: 'Week 8: Capacity', context: 'Goal: Test strength. Feel "Strong", not "Tired".', movements: ['HK Press: 2 sets of 5 (Add load)', 'Pull-up/Row: 2 sets of 5', 'Goblet Squat: 2 sets of 10', 'Farmer Carry: Distance'] },
+
+                // PHASE 3: THE RETURN
+                { week: 9, title: 'Week 9: Integration', context: 'Goal: The "Perfect Workout" structure.', movements: ['[A] 3 Rnds: Press (8) + Hang (30s)', '[B] 1 Rnd: Goblet Sq (8) + Swing (15) + Carry', 'Finish: Walk'] },
+                { week: 10, title: 'Week 10: Density', context: 'Goal: Minimize rest in Part A.', movements: ['[A] 3 Rnds: Press (8) + Hang (30s)', '[B] 1 Rnd: Goblet Sq (10) + Swing (20) + Carry', 'Finish: Walk'] },
+                { week: 11, title: 'Week 11: Load', context: 'Goal: Heavier bell for swings/squats.', movements: ['[A] 3 Rnds: Press (5 Heavy) + Hang', '[B] 1 Rnd: Goblet Sq (10) + Swing (25) + Carry', 'Finish: Walk'] },
+                { week: 12, title: 'Week 12: Graduation', context: 'Goal: Ready for "Easy Strength".', movements: ['[A] 3 Rnds: Press (5) + Pull (5)', '[B] 2 Rnds: Goblet Sq (10) + Swing (25)', 'Congratulations. You are back.'] }
+            ]
+        };
+
         // --- 2. STATE MANAGEMENT ---
         
-        const STORAGE_KEY = 'iron-garage-v1';
+        const STORAGE_KEY = 'iron-garage-v8'; // Bumped version
         
         let state = {
-            currentTab: 'grind', // grind, ballistic, hybrid
-            activeWorkout: null, // object if a workout is active
-            checklist: {}, // { 0: true, 1: false } map of completed rounds
+            currentTab: 'home', 
+            activeWorkout: null,
+            activeRebuildWeek: null, 
+            warmupActive: false,
+            checklist: {}, 
             ...loadState()
         };
 
@@ -264,6 +427,7 @@
             localStorage.setItem(STORAGE_KEY, JSON.stringify({
                 currentTab: state.currentTab,
                 activeWorkout: state.activeWorkout,
+                activeRebuildWeek: state.activeRebuildWeek,
                 checklist: state.checklist
             }));
         }
@@ -271,6 +435,7 @@
         // --- 3. UI RENDERING COMPONENTS ---
 
         const Icons = {
+            Home: '<i data-lucide="home" class="w-5 h-5"></i>',
             Dumbbell: '<i data-lucide="dumbbell" class="w-5 h-5"></i>',
             Zap: '<i data-lucide="zap" class="w-5 h-5"></i>',
             Activity: '<i data-lucide="activity" class="w-5 h-5"></i>',
@@ -278,20 +443,27 @@
             ChevronLeft: '<i data-lucide="chevron-left" class="w-6 h-6"></i>',
             Check: '<i data-lucide="check" class="w-4 h-4 text-white hidden"></i>',
             Info: '<i data-lucide="info" class="w-5 h-5"></i>',
-            Settings: '<i data-lucide="settings-2" class="w-5 h-5"></i>'
+            Leaf: '<i data-lucide="leaf" class="w-5 h-5"></i>',
+            Dices: '<i data-lucide="dices" class="w-8 h-8"></i>',
+            Flame: '<i data-lucide="flame" class="w-5 h-5"></i>',
+            X: '<i data-lucide="x" class="w-6 h-6"></i>',
+            Calendar: '<i data-lucide="calendar" class="w-5 h-5"></i>',
+            DiffEasy: '<span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>',
+            DiffMed: '<span class="inline-block w-2 h-2 rounded-full bg-yellow-500"></span>',
+            DiffHard: '<span class="inline-block w-2 h-2 rounded-full bg-red-600"></span>'
         };
 
         function render() {
             const app = document.getElementById('app');
             let html = '';
 
-            // Safe Area Header
+            // Sticky Header
             html += `
                 <div class="pt-safe-top bg-zinc-900 border-b border-zinc-800 sticky top-0 z-50">
                     <div class="h-14 flex items-center justify-between px-4">
                         ${state.activeWorkout 
                             ? `<button onclick="exitWorkout()" class="p-2 -ml-2 text-zinc-400 hover:text-white">${Icons.ChevronLeft}</button>`
-                            : `<div class="w-8"></div>` // Spacer
+                            : `<button onclick="toggleWarmup()" class="p-2 -ml-2 text-zinc-400 hover:text-red-500">${Icons.Flame}</button>` 
                         }
                         <h1 class="text-lg font-bold tracking-tight text-white uppercase italic">The Iron Garage</h1>
                         <button onclick="showInventory()" class="p-2 -mr-2 text-zinc-400 hover:text-white">${Icons.Info}</button>
@@ -299,54 +471,233 @@
                 </div>
             `;
 
-            // Content Area
+            // Content
             html += `<div class="flex-1 overflow-y-auto overflow-x-hidden hide-scrollbar pb-safe-bottom bg-zinc-950 relative">`;
 
-            if (state.activeWorkout) {
+            if (state.warmupActive) {
+                html += renderWarmup();
+            } else if (state.activeWorkout) {
                 html += renderActiveWorkout();
             } else {
                 html += renderDashboard();
             }
 
-            html += `</div>`; // End Content
-
+            html += `</div>`;
             app.innerHTML = html;
             lucide.createIcons();
         }
 
-        function renderDashboard() {
+        function renderWarmup() {
             return `
-                <!-- Tabs -->
-                <div class="flex border-b border-zinc-800 bg-zinc-900 sticky top-0 z-40">
-                    <button onclick="switchTab('grind')" class="flex-1 py-4 text-sm font-medium uppercase tracking-wider text-center ${state.currentTab === 'grind' ? 'tab-active' : 'tab-inactive'}">Grind</button>
-                    <button onclick="switchTab('ballistic')" class="flex-1 py-4 text-sm font-medium uppercase tracking-wider text-center ${state.currentTab === 'ballistic' ? 'tab-active' : 'tab-inactive'}">Ballistic</button>
-                    <button onclick="switchTab('hybrid')" class="flex-1 py-4 text-sm font-medium uppercase tracking-wider text-center ${state.currentTab === 'hybrid' ? 'tab-active' : 'tab-inactive'}">Hybrid</button>
+                <div class="p-6 space-y-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-2xl font-black text-white uppercase">Daily Warm-up</h2>
+                        <button onclick="toggleWarmup()" class="text-zinc-400 hover:text-white">${Icons.X}</button>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="text-sm text-zinc-500 font-mono mb-2 uppercase tracking-widest">The 5 Steps</div>
+                        ${WARMUP_ROUTINE.map((step, idx) => `
+                            <div class="bg-zinc-900 border border-zinc-800 p-4 rounded-xl">
+                                <h3 class="text-red-500 font-bold uppercase text-sm mb-1">${step.title}</h3>
+                                <p class="text-zinc-300 text-sm leading-snug">${step.desc}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <button onclick="toggleWarmup()" class="w-full bg-zinc-100 text-zinc-900 font-bold py-4 rounded-xl mt-8">Ready to Lift</button>
                 </div>
+            `;
+        }
 
-                <!-- Randomizer FAB -->
+        function renderDashboard() {
+            let navHtml = `
+                <div class="flex border-b border-zinc-800 bg-zinc-900 sticky top-0 z-40 overflow-x-auto hide-scrollbar">
+                     <button onclick="switchTab('home')" class="flex-1 min-w-[70px] py-4 flex justify-center ${state.currentTab === 'home' ? 'tab-active' : 'tab-inactive'}">${Icons.Home}</button>
+                    <button onclick="switchTab('grind')" class="flex-1 min-w-[80px] py-4 text-xs font-bold uppercase tracking-wider text-center ${state.currentTab === 'grind' ? 'tab-active' : 'tab-inactive'}">Grind</button>
+                    <button onclick="switchTab('ballistic')" class="flex-1 min-w-[80px] py-4 text-xs font-bold uppercase tracking-wider text-center ${state.currentTab === 'ballistic' ? 'tab-active' : 'tab-inactive'}">Ballistic</button>
+                    <button onclick="switchTab('hybrid')" class="flex-1 min-w-[80px] py-4 text-xs font-bold uppercase tracking-wider text-center ${state.currentTab === 'hybrid' ? 'tab-active' : 'tab-inactive'}">Hybrid</button>
+                    <button onclick="switchTab('rebuild')" class="flex-1 min-w-[80px] py-4 text-xs font-bold uppercase tracking-wider text-center ${state.currentTab === 'rebuild' ? 'tab-active-rebuild' : 'tab-inactive'}">Rebuild</button>
+                </div>
+            `;
+
+            if (state.currentTab === 'home') return navHtml + renderHome();
+            if (state.currentTab === 'rebuild') return navHtml + renderRebuildHub();
+
+            let listHtml = `
                 <div class="px-4 pt-6 pb-2">
-                    <button onclick="randomizeWorkout()" class="w-full bg-gradient-to-r from-red-600 to-red-700 active:from-red-700 active:to-red-800 text-white rounded-xl py-4 shadow-lg shadow-red-900/20 flex items-center justify-center gap-2 transition-transform active:scale-[0.98]">
+                    <button onclick="randomizeInTab('${state.currentTab}')" class="w-full bg-gradient-to-r from-red-600 to-red-700 active:from-red-700 active:to-red-800 text-white rounded-xl py-4 shadow-lg shadow-red-900/20 flex items-center justify-center gap-2 transition-transform active:scale-[0.98]">
                         ${Icons.Shuffle}
                         <span class="font-bold uppercase tracking-wide">Roll the Dice: ${state.currentTab}</span>
                     </button>
                 </div>
-
-                <!-- Workout List -->
                 <div class="p-4 space-y-3">
                     <div class="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Available Protocols</div>
                     ${WORKOUTS[state.currentTab].map(w => `
-                        <div onclick="selectWorkout('${w.id}')" class="bg-zinc-900 border border-zinc-800 rounded-xl p-4 active:bg-zinc-800 transition-colors cursor-pointer">
-                            <div class="flex justify-between items-start mb-1">
+                        <div onclick="selectWorkout('${w.id}')" class="bg-zinc-900 border border-zinc-800 rounded-xl p-4 active:bg-zinc-800 transition-colors cursor-pointer relative overflow-hidden">
+                            <div class="absolute top-0 right-0 p-2">
+                                ${getDifficultyIcon(w.difficulty)}
+                            </div>
+                            <div class="flex justify-between items-start mb-1 pr-6">
                                 <h3 class="text-white font-bold text-lg">${w.title}</h3>
-                                <span class="text-xs bg-zinc-800 text-zinc-400 px-2 py-1 rounded border border-zinc-700">${w.rounds > 1 ? w.rounds + ' Rnds' : 'Checklist'}</span>
+                            </div>
+                             <div class="mb-2">
+                                <span class="text-xs bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded border border-zinc-700">${w.rounds > 1 ? w.rounds + ' Rnds' : 'Checklist'}</span>
                             </div>
                             <p class="text-zinc-400 text-sm leading-snug mb-3">${w.desc}</p>
                             <div class="flex items-center gap-2 text-xs text-zinc-500">
-                                ${Icons.Dumbbell}
+                                ${getIconForTab(state.currentTab)}
                                 <span>${w.equipment}</span>
                             </div>
                         </div>
                     `).join('')}
+                </div>
+            `;
+            return navHtml + listHtml;
+        }
+
+        function renderRebuildHub() {
+            // View 2: Specific Week Selected
+            if (state.activeRebuildWeek !== null) {
+                // Find the week object
+                const weekData = REBUILD_PATHWAY.weeks.find(w => w.week === state.activeRebuildWeek);
+                
+                return `
+                    <div class="p-6">
+                         <button onclick="clearRebuildWeek()" class="flex items-center text-emerald-500 text-sm font-bold mb-4">
+                            ${Icons.ChevronLeft} Back to Roadmap
+                        </button>
+                        
+                        <div class="bg-zinc-900 border border-emerald-900/30 p-6 rounded-2xl mb-6 shadow-lg shadow-emerald-900/10">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="p-2 bg-emerald-900/20 text-emerald-500 rounded-lg">${Icons.Calendar}</div>
+                                <div>
+                                    <h2 class="text-xl font-bold text-white">${weekData.title}</h2>
+                                    <p class="text-xs text-emerald-400 font-mono uppercase">Rebuild Phase</p>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <h4 class="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2">Context</h4>
+                                <p class="text-zinc-300 text-sm leading-relaxed">${weekData.context}</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                             <div class="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Prescribed Protocol</div>
+                             <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
+                                <ul class="space-y-3">
+                                    ${weekData.movements.map(m => `
+                                        <li class="flex items-start gap-3 text-zinc-200 text-sm">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-2 shrink-0"></span>
+                                            <span class="leading-relaxed">${m}</span>
+                                        </li>
+                                    `).join('')}
+                                </ul>
+                                <div class="mt-6 pt-4 border-t border-zinc-800">
+                                    <button onclick="startRebuildSession(${state.activeRebuildWeek})" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg uppercase tracking-wide text-sm">
+                                        Start Session
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // View 1: Roadmap Overview (12 Weeks)
+            return `
+                <div class="p-6 space-y-6">
+                    <div class="bg-zinc-900 p-5 rounded-2xl border border-zinc-800">
+                        <h2 class="text-xl font-bold text-white mb-2 flex items-center gap-2">
+                            <span class="text-emerald-500">${Icons.Leaf}</span>
+                            Mission Brief
+                        </h2>
+                        <p class="text-zinc-400 text-sm leading-relaxed">
+                            ${REBUILD_PATHWAY.overview}
+                        </p>
+                    </div>
+
+                    <div class="space-y-6">
+                        <!-- Phase 1 -->
+                        <div>
+                            <div class="text-xs font-bold text-emerald-500 uppercase tracking-widest mb-3 pl-1">Phase 1: The Reset</div>
+                            <div class="grid grid-cols-4 gap-2">
+                                ${[1,2,3,4].map(wk => `
+                                    <button onclick="setRebuildWeek(${wk})" class="aspect-square bg-zinc-900 border border-zinc-800 rounded-xl flex flex-col items-center justify-center hover:border-emerald-500 hover:bg-zinc-800 transition-all">
+                                        <span class="text-[10px] text-zinc-500 uppercase">Wk</span>
+                                        <span class="text-xl font-bold text-white">${wk}</span>
+                                    </button>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <!-- Phase 2 -->
+                         <div>
+                            <div class="text-xs font-bold text-emerald-500 uppercase tracking-widest mb-3 pl-1">Phase 2: Building Back</div>
+                            <div class="grid grid-cols-4 gap-2">
+                                ${[5,6,7,8].map(wk => `
+                                    <button onclick="setRebuildWeek(${wk})" class="aspect-square bg-zinc-900 border border-zinc-800 rounded-xl flex flex-col items-center justify-center hover:border-emerald-500 hover:bg-zinc-800 transition-all">
+                                        <span class="text-[10px] text-zinc-500 uppercase">Wk</span>
+                                        <span class="text-xl font-bold text-white">${wk}</span>
+                                    </button>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <!-- Phase 3 -->
+                         <div>
+                            <div class="text-xs font-bold text-emerald-500 uppercase tracking-widest mb-3 pl-1">Phase 3: The Return</div>
+                            <div class="grid grid-cols-4 gap-2">
+                                ${[9,10,11,12].map(wk => `
+                                    <button onclick="setRebuildWeek(${wk})" class="aspect-square bg-zinc-900 border border-zinc-800 rounded-xl flex flex-col items-center justify-center hover:border-emerald-500 hover:bg-zinc-800 transition-all">
+                                        <span class="text-[10px] text-zinc-500 uppercase">Wk</span>
+                                        <span class="text-xl font-bold text-white">${wk}</span>
+                                    </button>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderHome() {
+            return `
+                <div class="p-6 flex flex-col gap-6 min-h-[80vh]">
+                    <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-8 flex flex-col items-center text-center space-y-5 shadow-xl shadow-black/50 mt-4">
+                        <div class="bg-red-900/10 p-5 rounded-full border border-red-900/30 text-red-500 ring-1 ring-red-900/20">${Icons.Dices}</div>
+                        <div class="space-y-1">
+                            <h2 class="text-2xl font-black text-white uppercase italic tracking-tight">Garage Roulette</h2>
+                            <p class="text-zinc-500 text-sm font-medium">Let the garage gods decide your fate.</p>
+                        </div>
+                        <button onclick="randomizeGlobal()" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-4 rounded-xl uppercase tracking-wider transition-all active:scale-[0.98] shadow-lg shadow-red-900/40 text-sm flex items-center justify-center gap-2">
+                            ${Icons.Shuffle} Randomize All
+                        </button>
+                    </div>
+                    
+                    <div class="space-y-3 mt-2">
+                        <h3 class="text-xs font-bold text-zinc-600 uppercase tracking-wider ml-1">Quick Access</h3>
+                        <div class="grid grid-cols-2 gap-3">
+                            <button onclick="switchTab('grind')" class="bg-zinc-900 p-4 rounded-xl border border-zinc-800 text-left hover:border-zinc-700 hover:bg-zinc-800 transition-all group">
+                                <span class="block text-zinc-500 mb-2 group-hover:text-red-500 transition-colors">${Icons.Dumbbell}</span>
+                                <span class="font-bold text-zinc-200 block text-sm uppercase">Grind</span>
+                                <span class="text-xs text-zinc-600">Strength Focus</span>
+                            </button>
+                            <button onclick="switchTab('ballistic')" class="bg-zinc-900 p-4 rounded-xl border border-zinc-800 text-left hover:border-zinc-700 hover:bg-zinc-800 transition-all group">
+                                <span class="block text-zinc-500 mb-2 group-hover:text-red-500 transition-colors">${Icons.Zap}</span>
+                                <span class="font-bold text-zinc-200 block text-sm uppercase">Ballistic</span>
+                                <span class="text-xs text-zinc-600">Conditioning</span>
+                            </button>
+                            <button onclick="switchTab('hybrid')" class="bg-zinc-900 p-4 rounded-xl border border-zinc-800 text-left hover:border-zinc-700 hover:bg-zinc-800 transition-all group">
+                                <span class="block text-zinc-500 mb-2 group-hover:text-red-500 transition-colors">${Icons.Activity}</span>
+                                <span class="font-bold text-zinc-200 block text-sm uppercase">Hybrid</span>
+                                <span class="text-xs text-zinc-600">The Mix</span>
+                            </button>
+                            <button onclick="switchTab('rebuild')" class="bg-zinc-900 p-4 rounded-xl border border-zinc-800 text-left hover:border-emerald-700 hover:bg-zinc-800 transition-all group">
+                                <span class="block text-zinc-500 mb-2 group-hover:text-emerald-500 transition-colors">${Icons.Leaf}</span>
+                                <span class="font-bold text-zinc-200 block text-sm uppercase">Rebuild</span>
+                                <span class="text-xs text-zinc-600">Reset & Recovery</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             `;
         }
@@ -354,37 +705,52 @@
         function renderActiveWorkout() {
             const w = state.activeWorkout;
             const progress = calculateProgress();
+            // Determine category style
+            let category = getWorkoutCategory(w.id);
+            let themeColor = 'bg-red-900/30 text-red-500 border-red-900/50';
+            let checkColor = 'checkbox-wrapper';
+            
+            if (category === 'Rebuild') {
+                 themeColor = 'bg-emerald-900/30 text-emerald-500 border-emerald-900/50';
+                 checkColor = 'checkbox-wrapper-rebuild';
+            }
             
             return `
                 <div class="min-h-full pb-20">
-                    <!-- Hero -->
                     <div class="px-6 pt-8 pb-6 bg-zinc-900 border-b border-zinc-800">
-                        <div class="inline-block px-2 py-1 rounded bg-red-900/30 text-red-500 text-xs font-bold uppercase tracking-wider mb-3 border border-red-900/50">
-                            ${state.currentTab} Protocol
+                        <div class="flex justify-between items-start mb-3">
+                            <div class="inline-block px-2 py-1 rounded ${themeColor} text-xs font-bold uppercase tracking-wider border">
+                                ${category}
+                            </div>
+                            ${w.difficulty ? `
+                            <div class="bg-zinc-800 px-2 py-1 rounded border border-zinc-700 text-xs text-zinc-300 capitalize flex items-center gap-1">
+                                ${getDifficultyIcon(w.difficulty)} ${w.difficulty}
+                            </div>` : ''}
                         </div>
                         <h2 class="text-3xl font-black text-white mb-2 leading-none">${w.title}</h2>
                         <p class="text-zinc-400 text-sm">${w.desc}</p>
                     </div>
 
-                    <!-- Details -->
                     <div class="p-6 space-y-6">
-                        
-                        <!-- Equipment -->
+                        ${w.equipment ? `
                         <div class="bg-zinc-900/50 rounded-lg p-4 border border-zinc-800">
                             <h4 class="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2">Gear Required</h4>
                             <p class="text-zinc-300 text-sm font-medium">${w.equipment}</p>
-                        </div>
+                        </div>` : ''}
 
-                        <!-- Protocol Info -->
                          <div class="bg-zinc-900/50 rounded-lg p-4 border border-zinc-800">
                             <h4 class="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2">The Work</h4>
-                            <p class="text-zinc-300 text-sm mb-3 italic">"${w.protocol}"</p>
+                            ${w.protocol ? `<p class="text-zinc-300 text-sm mb-3 italic">"${w.protocol}"</p>` : ''}
                             <ul class="space-y-2">
-                                ${w.movements.map(m => `<li class="flex items-center gap-2 text-zinc-300 text-sm"><span class="w-1.5 h-1.5 rounded-full bg-red-600"></span>${m}</li>`).join('')}
+                                ${w.movements.map(m => `
+                                    <li class="flex items-start gap-3 text-zinc-300 text-sm">
+                                        <span class="w-1.5 h-1.5 rounded-full ${category === 'Rebuild' ? 'bg-emerald-500' : 'bg-red-600'} mt-2 shrink-0"></span>
+                                        <span class="leading-relaxed">${m}</span>
+                                    </li>
+                                `).join('')}
                             </ul>
                         </div>
 
-                        <!-- Tracker -->
                         <div>
                              <div class="flex justify-between items-end mb-4">
                                 <h4 class="text-sm font-bold text-white uppercase tracking-wider">Round Tracker</h4>
@@ -393,7 +759,7 @@
                             
                             <div class="grid grid-cols-5 gap-2">
                                 ${Array.from({length: w.rounds}).map((_, i) => `
-                                    <label class="checkbox-wrapper cursor-pointer relative">
+                                    <label class="${checkColor} cursor-pointer relative">
                                         <input type="checkbox" class="opacity-0 absolute w-full h-full z-10" 
                                             ${state.checklist[i] ? 'checked' : ''} 
                                             onchange="toggleRound(${i})">
@@ -403,95 +769,129 @@
                                         </div>
                                     </label>
                                 `).join('')}
-                                
-                                <!-- Add Round Button -->
-                                <button onclick="addRound()" class="h-12 rounded bg-zinc-900 border border-dashed border-zinc-700 flex items-center justify-center text-zinc-500 hover:text-white hover:border-zinc-500 active:scale-95 transition-all">
-                                    <span class="text-xl font-bold">+</span>
-                                </button>
+                                <button onclick="addRound()" class="h-12 rounded bg-zinc-900 border border-dashed border-zinc-700 flex items-center justify-center text-zinc-500 hover:text-white hover:border-zinc-500 active:scale-95 transition-all"><span class="text-xl font-bold">+</span></button>
                             </div>
                         </div>
                         
                         <div class="pt-8">
-                             <button onclick="completeWorkout()" class="w-full py-4 bg-zinc-100 text-zinc-950 font-bold uppercase rounded-xl active:scale-[0.98] transition-transform">
-                                Finish Session
-                            </button>
+                             <button onclick="completeWorkout()" class="w-full py-4 bg-zinc-100 text-zinc-900 font-bold uppercase rounded-xl active:scale-[0.98] transition-transform">Finish Session</button>
                         </div>
                     </div>
                 </div>
             `;
         }
 
-        // --- 4. LOGIC & ACTIONS ---
+        // --- 4. LOGIC ---
 
-        function switchTab(tab) {
-            state.currentTab = tab;
+        function switchTab(tab) { state.currentTab = tab; saveState(); render(); }
+        function toggleWarmup() { state.warmupActive = !state.warmupActive; render(); }
+        
+        function getWorkoutCategory(id) {
+            // Check standard workouts
+            for (const [cat, list] of Object.entries(WORKOUTS)) {
+                if (list.find(w => w.id === id)) return cat.charAt(0).toUpperCase() + cat.slice(1);
+            }
+            // Check rebuild
+            if(id.startsWith('rebuild-week-')) return 'Rebuild';
+            
+            return 'Unknown';
+        }
+        
+        function getIconForTab(tab) {
+            if (tab === 'grind') return Icons.Dumbbell;
+            if (tab === 'ballistic') return Icons.Zap;
+            if (tab === 'hybrid') return Icons.Activity;
+            if (tab === 'rebuild') return Icons.Leaf;
+            return Icons.Dumbbell;
+        }
+
+        function getDifficultyIcon(diff) {
+            if (diff === 'beginner') return Icons.DiffEasy;
+            if (diff === 'intermediate') return Icons.DiffMed;
+            if (diff === 'advanced') return Icons.DiffHard;
+            return '';
+        }
+
+        // --- Rebuild Specific Logic ---
+        function setRebuildWeek(weekNum) {
+            state.activeRebuildWeek = weekNum;
+            saveState();
+            render();
+        }
+        
+        function clearRebuildWeek() {
+            state.activeRebuildWeek = null;
+            saveState();
+            render();
+        }
+        
+        function startRebuildSession(weekNum) {
+            const weekData = REBUILD_PATHWAY.weeks.find(w => w.week === weekNum);
+            
+            // Construct a temporary workout object for the runner
+            const tempWorkout = {
+                id: `rebuild-week-${weekNum}`,
+                title: weekData.title,
+                desc: weekData.context,
+                protocol: 'Complete all movements in order.',
+                equipment: 'Bodyweight / Light KB',
+                movements: weekData.movements,
+                rounds: 1,
+                difficulty: 'beginner'
+            };
+
+            state.activeWorkout = tempWorkout;
+            state.checklist = {};
             saveState();
             render();
         }
 
         function selectWorkout(id) {
-            const workout = WORKOUTS[state.currentTab].find(w => w.id === id);
+            let workout = null;
+            for (const list of Object.values(WORKOUTS)) {
+                const found = list.find(w => w.id === id);
+                if (found) { workout = found; break; }
+            }
             if (workout) {
                 state.activeWorkout = workout;
-                state.checklist = {}; // Reset rounds on new start
+                state.checklist = {}; 
+                state.warmupActive = false;
                 saveState();
                 render();
             }
         }
 
-        function randomizeWorkout() {
-            const list = WORKOUTS[state.currentTab];
+        function randomizeInTab(tab) {
+            const list = WORKOUTS[tab];
             const random = list[Math.floor(Math.random() * list.length)];
             selectWorkout(random.id);
         }
 
-        function toggleRound(index) {
-            state.checklist[index] = !state.checklist[index];
-            saveState();
-            render();
-        }
-        
-        function addRound() {
-            if(state.activeWorkout) {
-                state.activeWorkout.rounds += 1;
-                saveState();
-                render();
-            }
+        function randomizeGlobal() {
+            // Flatten ONLY the standard workouts, explicitly excluding Rebuild
+            const allWorkouts = Object.values(WORKOUTS).flat();
+            const random = allWorkouts[Math.floor(Math.random() * allWorkouts.length)];
+            selectWorkout(random.id);
         }
 
+        function toggleRound(index) { state.checklist[index] = !state.checklist[index]; saveState(); render(); }
+        function addRound() { if(state.activeWorkout) { state.activeWorkout.rounds += 1; saveState(); render(); } }
+        
         function calculateProgress() {
             const total = state.activeWorkout.rounds;
             const completed = Object.values(state.checklist).filter(Boolean).length;
             return Math.round((completed / total) * 100);
         }
 
-        function completeWorkout() {
-            if (confirm('Finish workout? This will clear current progress.')) {
-                exitWorkout();
-            }
-        }
-
-        function exitWorkout() {
-            state.activeWorkout = null;
-            state.checklist = {};
-            saveState();
-            render();
-        }
+        function completeWorkout() { if (confirm('Finish workout?')) { exitWorkout(); } }
+        function exitWorkout() { state.activeWorkout = null; state.checklist = {}; saveState(); render(); }
         
         function showInventory() {
-            const invText = `
-INVENTORY:
-• KBs (Pairs): ${INVENTORY.kbs.pairs.join('kg, ')}kg
-• KBs (Singles): ${INVENTORY.kbs.singles.join('kg, ')}kg
-• Barbell
-• ${INVENTORY.machines.join('\n• ')}
-            `.trim();
+            const invText = `INVENTORY:\n• KBs (Pairs): ${INVENTORY.kbs.pairs.join('kg, ')}kg\n• KBs (Singles): ${INVENTORY.kbs.singles.join('kg, ')}kg\n• Barbell\n• ${INVENTORY.machines.join('\n• ')}`;
             alert(invText);
         }
 
-        // Initialize
         render();
-
     </script>
 </body>
 </html>
