@@ -31,6 +31,7 @@
                             surface: '#27272a', // Zinc-800
                             emerald: '#10b981',
                             blue: '#3b82f6',
+                            amber: '#f59e0b',
                         }
                     },
                     fontFamily: {
@@ -75,6 +76,10 @@
             border-bottom: 2px solid #3b82f6; /* Blue-500 */
             color: #f4f4f5;
         }
+        .tab-active-ruck {
+            border-bottom: 2px solid #f59e0b; /* Amber-500 */
+            color: #f4f4f5;
+        }
         .tab-inactive {
             border-bottom: 2px solid transparent;
             color: #71717a; /* Zinc-500 */
@@ -106,6 +111,15 @@
         .checkbox-wrapper-tonic input:checked + div svg {
             display: block;
         }
+        
+        /* Ruck specific checkbox */
+         .checkbox-wrapper-ruck input:checked + div {
+            background-color: #f59e0b;
+            border-color: #f59e0b;
+        }
+        .checkbox-wrapper-ruck input:checked + div svg {
+            display: block;
+        }
     </style>
 </head>
 <body class="bg-zinc-950 text-zinc-100 h-screen w-screen overflow-hidden flex flex-col font-sans">
@@ -119,7 +133,7 @@
     <script>
         // --- 1. DATA ARCHITECTURE ---
         
-        const APP_BUILD_DATE = "Jan 13, 2026 - 6:35 PM MST";
+        const APP_BUILD_DATE = "Jan 13, 2026 - 7:09 PM MST";
 
         const INVENTORY = {
             kbs: {
@@ -219,7 +233,7 @@
                 {
                     id: 'rop-heavy',
                     title: 'Rite of Passage (Heavy)',
-                    desc: 'The classic Pavel Tsatsouline ladder press program.',
+                    desc: 'The classic ladder press program.',
                     equipment: 'Single KB',
                     difficulty: 'advanced',
                     protocol: 'Clean & Press Ladders (1-2-3-4-5). Rest as needed. Finish with high volume swings.',
@@ -285,7 +299,7 @@
                 {
                     id: 'humane-burpee',
                     title: 'Humane Burpee',
-                    desc: 'Volume descends, heart rate ascends. A Dan John classic.',
+                    desc: 'Volume descends, heart rate ascends.',
                     equipment: 'Kettlebell',
                     difficulty: 'intermediate',
                     protocol: '15 Swings, then a ladder of Goblet Squats and Pushups (5 reps, then 4, 3, 2, 1).',
@@ -300,7 +314,7 @@
                 {
                     id: 'eagle',
                     title: 'The Eagle',
-                    desc: 'A Dan John signature challenge. "So simple, so hard."',
+                    desc: 'A signature challenge. "So simple, so hard."',
                     equipment: 'Double KBs',
                     difficulty: 'advanced',
                     protocol: '8 Double Front Squats, then immediately walk 20m in Rack Walk. That is one round. Do not put bells down.',
@@ -536,11 +550,11 @@
                     protocol: 'Choose a Level (1-5) below. GOLDEN RULE: If you dread it, the load is too heavy. Keep HR in Zone 2 (130-140 BPM).',
                     movements: [
                         'Check Posture: Head Up, Ribs Down',
-                        'Lv 1: Unloaded / 2.5km / 18-20min/mi pace',
-                        'Lv 2: 10kg / 3.2km / 17-19min/mi pace',
-                        'Lv 3: 15kg / 4.8km / 15-16.5min/mi pace (Sweet Spot)',
-                        'Lv 4: 20kg / 5.0km / 15-16min/mi pace (Push)',
-                        'Lv 5: 24kg / 6.5km / <15min/mi pace (Challenge)'
+                        'Lv 1 (Recovery): Unloaded / 2.5km / 30m / 18-20min/mi',
+                        'Lv 2 (Light): 10kg / 3.2km / 35m / 17-19min/mi',
+                        'Lv 3 (Base): 15kg / 4.8km / 45m / 15-16.5min/mi',
+                        'Lv 4 (Push): 20kg / 5.0km / 50m / 15-16min/mi',
+                        'Lv 5 (Challenge): 24kg / 6.5km / 60m / <15min/mi'
                     ],
                     rounds: 1
                 },
@@ -621,6 +635,68 @@
                         'Repeat for time or reps'
                     ],
                     rounds: 20
+                }
+            ],
+            ruck: [
+                {
+                    id: 'ruck-15m',
+                    title: 'The Morning Reset (1.5 Miles)',
+                    desc: 'Short, restorative, good for stiff mornings. 1.5 Miles / 2.5 KM.',
+                    equipment: 'Ruck/Backpack',
+                    difficulty: 'beginner',
+                    protocol: 'Maintain a conversation pace. Green light intensity.',
+                    table: [
+                        { load: '10 lbs', beginner: '30:00', moderate: '25:30', advanced: '22:30' },
+                        { load: '20 lbs', beginner: '30:00', moderate: '25:30', advanced: '22:30' },
+                        { load: '30 lbs', beginner: '30:00', moderate: '25:30', advanced: '22:30' },
+                        { load: '45 lbs', beginner: '30:00', moderate: '25:30', advanced: '22:30' }
+                    ],
+                    movements: ['Goal: Flush stiffness', 'Pace: 15:00-20:00 min/mile', 'Focus: Posture']
+                },
+                {
+                    id: 'ruck-3k',
+                    title: 'The Standard 3K (1.9 Miles)',
+                    desc: 'Long enough to sweat, short enough to recover. Approx 1.9 Miles / 3 KM.',
+                    equipment: 'Ruck/Backpack',
+                    difficulty: 'intermediate',
+                    protocol: 'The standard tonic distance. Zone 2 Heart Rate.',
+                    table: [
+                        { load: '10 lbs', beginner: '37:00', moderate: '32:00', advanced: '28:00' },
+                        { load: '20 lbs', beginner: '37:00', moderate: '32:00', advanced: '28:00' },
+                        { load: '30 lbs', beginner: '37:00', moderate: '32:00', advanced: '28:00' },
+                        { load: '45 lbs', beginner: '37:00', moderate: '32:00', advanced: '28:00' }
+                    ],
+                    movements: ['Goal: Sweat & Recover', 'Pace: Steady', 'Focus: Breathing']
+                },
+                {
+                    id: 'ruck-5k',
+                    title: 'The 5K Ruck (3.1 Miles)',
+                    desc: 'A solid workout. At 45lbs, this shifts from Tonic to Training.',
+                    equipment: 'Ruck/Backpack',
+                    difficulty: 'advanced',
+                    protocol: 'Requires hydration. Monitor foot hotspots.',
+                    table: [
+                        { load: '10 lbs', beginner: '1h 02m', moderate: '53:00', advanced: '46:30' },
+                        { load: '20 lbs', beginner: '1h 02m', moderate: '53:00', advanced: '46:30' },
+                        { load: '30 lbs', beginner: '1h 02m', moderate: '53:00', advanced: '46:30' },
+                        { load: '45 lbs', beginner: '1h 02m', moderate: '53:00', advanced: '46:30' }
+                    ],
+                    movements: ['Goal: Endurance', 'Pace: Sustainable', 'Focus: Mental Toughness']
+                },
+                {
+                    id: 'ruck-5m',
+                    title: 'The Long Haul (5 Miles)',
+                    desc: 'Endurance volume. Weekend challenge.',
+                    equipment: 'Ruck/Backpack',
+                    difficulty: 'advanced',
+                    protocol: 'MUST bring water. Ensure you have 90 mins available.',
+                    table: [
+                        { load: '10 lbs', beginner: '1h 40m', moderate: '1h 25m', advanced: '1h 15m' },
+                        { load: '20 lbs', beginner: '1h 40m', moderate: '1h 25m', advanced: '1h 15m' },
+                        { load: '30 lbs', beginner: '1h 40m', moderate: '1h 25m', advanced: '1h 15m' },
+                        { load: '45 lbs', beginner: '1h 40m', moderate: '1h 25m', advanced: '1h 15m' }
+                    ],
+                    movements: ['Goal: Volume', 'Pace: Consistent', 'Focus: Durability']
                 }
             ]
         };
@@ -769,7 +845,7 @@
 
         // --- 2. STATE MANAGEMENT ---
         
-        const STORAGE_KEY = 'iron-garage-v13'; // Bumped version
+        const STORAGE_KEY = 'iron-garage-v14'; // Bumped version
         
         let state = {
             currentTab: 'home', 
@@ -880,23 +956,70 @@
                     <button onclick="switchTab('ballistic')" class="flex-1 min-w-[80px] py-4 text-xs font-bold uppercase tracking-wider text-center ${state.currentTab === 'ballistic' ? 'tab-active' : 'tab-inactive'}">Ballistic</button>
                     <button onclick="switchTab('hybrid')" class="flex-1 min-w-[80px] py-4 text-xs font-bold uppercase tracking-wider text-center ${state.currentTab === 'hybrid' ? 'tab-active' : 'tab-inactive'}">Hybrid</button>
                     <button onclick="switchTab('tonic')" class="flex-1 min-w-[80px] py-4 text-xs font-bold uppercase tracking-wider text-center ${state.currentTab === 'tonic' ? 'tab-active-tonic' : 'tab-inactive'}">Tonic</button>
+                     <button onclick="switchTab('ruck')" class="flex-1 min-w-[80px] py-4 text-xs font-bold uppercase tracking-wider text-center ${state.currentTab === 'ruck' ? 'tab-active-ruck' : 'tab-inactive'}">Ruck</button>
                     <button onclick="switchTab('rebuild')" class="flex-1 min-w-[80px] py-4 text-xs font-bold uppercase tracking-wider text-center ${state.currentTab === 'rebuild' ? 'tab-active-rebuild' : 'tab-inactive'}">Rebuild</button>
                 </div>
             `;
 
             if (state.currentTab === 'home') return navHtml + renderHome();
             if (state.currentTab === 'rebuild') return navHtml + renderRebuildHub();
+            
+            // Ruck Tab Specific
+            if (state.currentTab === 'ruck') {
+                let ruckHtml = `
+                    <div class="p-4 space-y-4">
+                        <div class="bg-zinc-900 border border-amber-900/30 p-5 rounded-2xl">
+                             <h2 class="text-xl font-bold text-white mb-3 flex items-center gap-2">
+                                <span class="text-amber-500">${Icons.Footprints}</span>
+                                Mission Brief
+                            </h2>
+                            <div class="space-y-4 text-sm text-zinc-400">
+                                <div>
+                                    <strong class="text-zinc-200 block mb-1">Equipment & Setup</strong>
+                                    Use a pack with thick straps and a sternum strap. Wrap weight (KB/Dumbbell) in a towel and position it high in the pack (between shoulder blades). Cinch tight.
+                                </div>
+                                 <div>
+                                    <strong class="text-zinc-200 block mb-1">Dan John's Rules</strong>
+                                    <ul class="list-disc pl-4 space-y-1">
+                                        <li><strong>Don't Run:</strong> Add weight, not speed.</li>
+                                        <li><strong>Posture First:</strong> Head up, ribs down. Shoulders back.</li>
+                                        <li><strong>The Talk Test:</strong> You should be able to speak in full sentences.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                         <div class="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Distance Protocols</div>
+                        ${WORKOUTS['ruck'].map(w => `
+                             <div onclick="selectWorkout('${w.id}')" class="bg-zinc-900 border border-zinc-800 rounded-xl p-4 active:bg-zinc-800 transition-colors cursor-pointer relative overflow-hidden group hover:border-amber-700/50">
+                                <div class="absolute top-0 right-0 p-2">
+                                    ${getDifficultyIcon(w.difficulty)}
+                                </div>
+                                <div class="flex justify-between items-start mb-1 pr-6">
+                                    <h3 class="text-white font-bold text-lg group-hover:text-amber-500 transition-colors">${w.title}</h3>
+                                </div>
+                                <p class="text-zinc-400 text-sm leading-snug mb-3">${w.desc}</p>
+                                <div class="flex items-center gap-2 text-xs text-zinc-500">
+                                    ${Icons.Footprints}
+                                    <span>${w.equipment}</span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                return navHtml + ruckHtml;
+            }
 
             let listHtml = `
-                <!-- Randomizer FAB (Excluded from Tonic/Rebuild) -->
-                ${state.currentTab !== 'tonic' ? `
+                <!-- Randomizer FAB (Excluded from Tonic/Ruck/Rebuild) -->
+                ${(state.currentTab !== 'tonic' && state.currentTab !== 'ruck') ? `
                 <div class="px-4 pt-6 pb-2">
                     <button onclick="randomizeInTab('${state.currentTab}')" class="w-full bg-gradient-to-r from-red-600 to-red-700 active:from-red-700 active:to-red-800 text-white rounded-xl py-4 shadow-lg shadow-red-900/20 flex items-center justify-center gap-2 transition-transform active:scale-[0.98]">
                         ${Icons.Shuffle}
                         <span class="font-bold uppercase tracking-wide">Roll the Dice: ${state.currentTab}</span>
                     </button>
                 </div>
-                ` : `<div class="px-4 pt-6"><div class="bg-blue-900/20 border border-blue-900/50 p-3 rounded-lg text-blue-400 text-xs text-center">Tonic sessions are restorative. Choose deliberately.</div></div>`}
+                ` : `<div class="px-4 pt-6"><div class="bg-blue-900/20 border border-blue-900/50 p-3 rounded-lg text-blue-400 text-xs text-center">Restorative sessions. Choose deliberately.</div></div>`}
 
                 <!-- Workout List -->
                 <div class="p-4 space-y-3">
@@ -1038,6 +1161,7 @@
                             ${Icons.Shuffle} Randomize All
                         </button>
                         <div class="text-[10px] text-zinc-600 font-mono mt-4">Build: ${APP_BUILD_DATE}</div>
+                        <div class="text-[9px] text-zinc-700 mt-1">Based on the works of Dan John</div>
                     </div>
                     
                     <div class="space-y-3 mt-2">
@@ -1063,15 +1187,18 @@
                                 <span class="font-bold text-zinc-200 block text-sm uppercase">Tonic</span>
                                 <span class="text-xs text-zinc-600">Bodyweight/Reset</span>
                             </button>
+                             <button onclick="switchTab('ruck')" class="bg-zinc-900 p-4 rounded-xl border border-zinc-800 text-left hover:border-amber-700 hover:bg-zinc-800 transition-all group">
+                                <span class="block text-zinc-500 mb-2 group-hover:text-amber-500 transition-colors">${Icons.Footprints}</span>
+                                <span class="font-bold text-zinc-200 block text-sm uppercase">Rucking</span>
+                                <span class="text-xs text-zinc-600">Cardio for Lifters</span>
+                            </button>
+                             <!-- Rebuild  -->
+                            <button onclick="switchTab('rebuild')" class="bg-zinc-900 p-4 rounded-xl border border-zinc-800 text-left hover:border-emerald-700 hover:bg-zinc-800 transition-all group">
+                                <span class="block text-zinc-500 mb-2 group-hover:text-emerald-500 transition-colors">${Icons.Leaf}</span>
+                                <span class="font-bold text-zinc-200 block text-sm uppercase">Rebuild</span>
+                                <span class="text-xs text-zinc-600">Return to Play</span>
+                            </button>
                         </div>
-                         <!-- Rebuild separate row -->
-                        <button onclick="switchTab('rebuild')" class="w-full bg-zinc-900 p-4 rounded-xl border border-zinc-800 text-left hover:border-emerald-700 hover:bg-zinc-800 transition-all group flex items-center justify-between">
-                            <div>
-                                <span class="font-bold text-zinc-200 block text-sm uppercase">Rebuild Program</span>
-                                <span class="text-xs text-zinc-600">12-Week Return Protocol</span>
-                            </div>
-                            <span class="text-zinc-500 group-hover:text-emerald-500 transition-colors">${Icons.Leaf}</span>
-                        </button>
                     </div>
                 </div>
             `;
@@ -1091,6 +1218,9 @@
             } else if (category === 'Tonic') {
                  themeColor = 'bg-blue-900/30 text-blue-500 border-blue-900/50';
                  checkColor = 'checkbox-wrapper-tonic';
+            } else if (category === 'Ruck') {
+                 themeColor = 'bg-amber-900/30 text-amber-500 border-amber-900/50';
+                 checkColor = 'checkbox-wrapper-ruck';
             }
             
             return `
@@ -1115,6 +1245,33 @@
                             <h4 class="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2">Gear Required</h4>
                             <p class="text-zinc-300 text-sm font-medium">${w.equipment}</p>
                         </div>` : ''}
+                        
+                        <!-- Ruck Table Logic -->
+                        ${w.table ? `
+                        <div class="bg-zinc-900/50 rounded-lg p-4 border border-zinc-800 overflow-x-auto">
+                            <h4 class="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2">Pace Targets</h4>
+                            <table class="w-full text-left text-sm text-zinc-300">
+                                <thead>
+                                    <tr class="border-b border-zinc-700">
+                                        <th class="py-2">Load</th>
+                                        <th class="py-2">Beginner</th>
+                                        <th class="py-2">Moderate</th>
+                                        <th class="py-2">Advanced</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${w.table.map(row => `
+                                        <tr class="border-b border-zinc-800 last:border-0">
+                                            <td class="py-2 font-bold text-white">${row.load}</td>
+                                            <td class="py-2 text-emerald-500">${row.beginner}</td>
+                                            <td class="py-2 text-yellow-500">${row.moderate}</td>
+                                            <td class="py-2 text-red-500">${row.advanced}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                        ` : ''}
 
                          <div class="bg-zinc-900/50 rounded-lg p-4 border border-zinc-800">
                             <h4 class="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2">The Work</h4>
@@ -1122,7 +1279,7 @@
                             <ul class="space-y-2">
                                 ${w.movements.map(m => `
                                     <li class="flex items-start gap-3 text-zinc-300 text-sm">
-                                        <span class="w-1.5 h-1.5 rounded-full ${category === 'Rebuild' ? 'bg-emerald-500' : (category === 'Tonic' ? 'bg-blue-500' : 'bg-red-600')} mt-2 shrink-0"></span>
+                                        <span class="w-1.5 h-1.5 rounded-full ${category === 'Rebuild' ? 'bg-emerald-500' : (category === 'Tonic' ? 'bg-blue-500' : (category === 'Ruck' ? 'bg-amber-500' : 'bg-red-600'))} mt-2 shrink-0"></span>
                                         <span class="leading-relaxed">${m}</span>
                                     </li>
                                 `).join('')}
@@ -1181,6 +1338,7 @@
             if (tab === 'hybrid') return Icons.Activity;
             if (tab === 'rebuild') return Icons.Leaf;
             if (tab === 'tonic') return Icons.Tonic;
+            if (tab === 'ruck') return Icons.Footprints;
             return Icons.Dumbbell;
         }
 
@@ -1246,7 +1404,7 @@
         }
 
         function randomizeGlobal() {
-            // Flatten ONLY the standard workouts, explicitly excluding Rebuild
+            // Flatten ONLY the standard workouts, explicitly excluding Rebuild/Tonic/Ruck
             const allowedLists = [WORKOUTS.grind, WORKOUTS.ballistic, WORKOUTS.hybrid];
             const allWorkouts = allowedLists.flat();
             const random = allWorkouts[Math.floor(Math.random() * allWorkouts.length)];
